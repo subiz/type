@@ -107,7 +107,7 @@ func TestStrings(t *testing.T) {
 	if !ret {
 		t.Fatal("must be true")
 	}
-	ret = ts.Evaluate("set of strings", []string{"abc", "bcd"}, Eq, []string{"abc", "bcd"})
+	ret = ts.Evaluate("set of strings", []string{"1", "2"}, Eq, []int{1, 2})
 	if !ret {
 		t.Fatal("must be true")
 	}
