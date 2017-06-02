@@ -6,7 +6,6 @@ import (
 	"errors"
 	"math"
 	"fmt"
-	"reflect"
 )
 
 const Tolerance = 0.000001
@@ -174,17 +173,4 @@ func (t *NumberType) Evaluate(obj interface{}, operator string, values interface
 		common.Panic(errors.New("unsupported operator"), "unsupported operator: " + operator)
 	}
 	return false
-}
-
-
-func convertToInterfaceSlice(slice interface{}) []interface{} {
-	s := reflect.ValueOf(slice)
-	if s.Kind() != reflect.Slice {
-		return nil
-	}
-	ret := make([]interface{}, s.Len())
-	for i:=0; i<s.Len(); i++ {
-		ret[i] = s.Index(i).Interface()
-	}
-	return ret
 }
