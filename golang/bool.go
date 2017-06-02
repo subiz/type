@@ -6,28 +6,34 @@ import (
 	"errors"
 )
 
+// BoolType boolean type system
 type BoolType struct {
 }
 
-func NewBoolType() iType {
+// NewBoolType create new boolean type system
+func NewBoolType() *BoolType {
 	return &BoolType{}
 }
 
-
+// Evaluate operator(object, values) == true
 func (t *BoolType) Evaluate(obj interface{}, operator string, values interface{}) bool {
-	var pobj *string
+	var pobj string
 	if obj != nil {
 		var ok bool
-		pobj, ok = obj.(*string)
+		pobj, ok = obj.(string)
 		if !ok {
-			common.Log("obj must be pointer to a string")
+			common.Log("obj must be a string, got `%s`", obj)
 			return false
 		}
 	}
 	var err error
 	var object bool
-	if pobj != nil {
-		object, err = strconv.ParseBool(*pobj)
+	if obj != nil {
+		object, err = strconv.ParseBool(pobj)
+		if err != nil {
+			common.LogError("%v unable to parse value `%s` to bool", err, pobj)
+			return false
+		}
 	}
 	switch operator {
 	case Nab:
@@ -35,16 +41,16 @@ func (t *BoolType) Evaluate(obj interface{}, operator string, values interface{}
 	case Ab:
 		return err == nil
 	case Empty:
-		return pobj == nil
+		return obj == nil
 	case NotEmpty:
-		return pobj != nil
+		return obj != nil
 	case True:
-		if pobj == nil {
+		if obj == nil {
 			return false
 		}
 		return object
 	case False:
-		if pobj == nil {
+		if obj == nil {
 			return false
 		}
 		return !object

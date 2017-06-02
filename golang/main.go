@@ -5,14 +5,11 @@ import (
 	"bitbucket.org/subiz/gocommon"
 )
 
-type ITypeSystem interface {
-	Evaluate(typename string, object interface{}, op string, value interface{}) bool
-}
-
 type iType interface {
 	Evaluate(object interface{}, opstring string, value interface{}) bool
 }
 
+// TypeSystem abc
 type TypeSystem struct {
 	stringts iType
 	numberts iType
@@ -21,7 +18,9 @@ type TypeSystem struct {
 }
 
 const (
+	//Ab abc
 	Ab = "ab"
+	//After abc
 	After = "after"
 	An = "an"
 	Before = "before"
@@ -56,7 +55,8 @@ const (
 	True = "true"
 )
 
-func NewTypeSystem() ITypeSystem {
+// NewTypeSystem create new type system
+func NewTypeSystem() *TypeSystem {
 	return &TypeSystem{
 		stringts: NewStringType(),
 		numberts: NewNumberType(),
@@ -65,6 +65,7 @@ func NewTypeSystem() ITypeSystem {
 	}
 }
 
+// Evaluate evalue a equation
 func (t *TypeSystem) Evaluate(typename string, object interface{}, op string, value interface{}) bool {
 	switch typename {
 	case "string":
@@ -73,7 +74,7 @@ func (t *TypeSystem) Evaluate(typename string, object interface{}, op string, va
 		return t.numberts.Evaluate(object, op, value)
 	case "boolean":
 		return t.boolts.Evaluate(object, op, value)
-	case "set of string":
+	case "set of strings":
 		return t.stringsts.Evaluate(object, op, value)
 	case "date":
 	default:

@@ -10,7 +10,7 @@ import (
 type StringType struct {
 }
 
-func NewStringType() iType {
+func NewStringType() *StringType {
 	return &StringType{}
 }
 
@@ -25,25 +25,20 @@ func contains(s []string, e string) bool {
 
 func (t *StringType) Evaluate(obj interface{}, operator string, values interface{}) bool {
 	var object string
-	var pobj *string
 	if obj != nil {
 		var ok bool
-		pobj, ok = obj.(*string)
+		object, ok = obj.(string)
 		if !ok {
-			common.Log("obj must be pointer to a string")
+			common.Log("obj must be a string, got `%v`", obj)
 			return false
 		}
 	}
 
-	if pobj != nil {
-		object = *pobj
-	}
-
 	switch operator {
 	case Empty:
-		return pobj == nil || len(strings.Trim(object, " ")) == 0
+		return obj == nil || len(strings.Trim(object, " ")) == 0
 	case NotEmpty:
-		return pobj != nil && len(strings.Trim(object, " ")) != 0
+		return obj != nil && len(strings.Trim(object, " ")) != 0
 	case Eq:
 		value, ok := values.(string)
 		return ok && object == value
@@ -52,7 +47,7 @@ func (t *StringType) Evaluate(obj interface{}, operator string, values interface
 		return !ok || object != value
 	case Regex:
 		value, ok := values.(string)
-		if !ok || pobj == nil {
+		if !ok || obj == nil {
 			return false
 		}
 		matched, err := regexp.MatchString(value, object)
@@ -60,49 +55,49 @@ func (t *StringType) Evaluate(obj interface{}, operator string, values interface
 		return matched
 	case In:
 		value, ok := values.([]string)
-		if !ok || pobj == nil {
+		if !ok || obj == nil {
 			return false
 		}
 		return contains(value, object)
 	case NotIn:
 		value, ok := values.([]string)
-		if !ok || pobj == nil {
+		if !ok || obj == nil {
 			return false
 		}
 		return !contains(value, object)
 	case StartsWith:
 		value, ok := values.(string)
-		if !ok || pobj == nil {
+		if !ok || obj == nil {
 			return false
 		}
 		return  strings.HasPrefix(object, value)
 	case NotStartsWith:
 		value, ok := values.(string)
-		if !ok || pobj == nil {
+		if !ok || obj == nil {
 			return false
 		}
 		return  strings.HasPrefix(object, value)
 	case EndsWith:
 		value, ok := values.(string)
-		if !ok || pobj == nil {
+		if !ok || obj == nil {
 			return false
 		}
 		return strings.HasSuffix(object, value)
 	case NotEndsWith:
 		value, ok := values.(string)
-		if !ok || pobj == nil {
+		if !ok || obj == nil {
 			return false
 		}
 		return !strings.HasSuffix(object, value)
 	case Contains:
 		value, ok := values.(string)
-		if !ok || pobj == nil {
+		if !ok || obj == nil {
 			return false
 		}
 		return strings.Contains(value, object)
 	case NotContains:
 		value, ok := values.(string)
-		if !ok || pobj == nil {
+		if !ok || obj == nil {
 			return false
 		}
 		return !strings.Contains(value, object)

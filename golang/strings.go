@@ -88,63 +88,63 @@ func (t *StringsType) Evaluate(obj interface{} /*slice*/, operator string, value
 		return !superset(object, value)
 	case Regex:
 		for _, s := range object {
-			if t.stringtype.Evaluate(&s, Regex, values) {
+			if t.stringtype.Evaluate(s, Regex, values) {
 				return true
 			}
 		}
 		return false
 	case In:
 		for _, s := range object {
-			if t.stringtype.Evaluate(&s, In, values) {
+			if t.stringtype.Evaluate(s, In, values) {
 				return true
 			}
 		}
 		return false
 	case NotIn:
 		for _, s := range object {
-			if t.stringtype.Evaluate(&s, In, values) {
+			if t.stringtype.Evaluate(s, In, values) {
 				return false
 			}
 		}
 		return true
 	case StartsWith:
 		for _, s := range object {
-			if t.stringtype.Evaluate(&s, StartsWith, values) {
+			if t.stringtype.Evaluate(s, StartsWith, values) {
 				return true
 			}
 		}
 		return false
 	case EndsWith:
 		for _, s := range object {
-			if t.stringtype.Evaluate(&s, EndsWith, values) {
+			if t.stringtype.Evaluate(s, EndsWith, values) {
 				return true
 			}
 		}
 		return false
 	case NotStartsWith:
 		for _, s := range object {
-			if t.stringtype.Evaluate(&s, StartsWith, values) {
+			if t.stringtype.Evaluate(s, StartsWith, values) {
 				return false
 			}
 		}
 		return true
 	case NotEndsWith:
 		for _, s := range object {
-			if t.stringtype.Evaluate(&s, EndsWith, values) {
+			if t.stringtype.Evaluate(s, EndsWith, values) {
 				return false
 			}
 		}
 		return true
 	case Contains:
 		for _, s := range object {
-			if t.stringtype.Evaluate(&s, Contains, values) {
+			if t.stringtype.Evaluate(s, Contains, values) {
 				return true
 			}
 		}
 		return false
 	case NotContains:
 		for _, s := range object {
-			if t.stringtype.Evaluate(&s, Contains, values) {
+			if t.stringtype.Evaluate(s, Contains, values) {
 				return false
 			}
 		}
