@@ -5,6 +5,8 @@ import (
 	"bitbucket.org/subiz/gocommon"
 	"errors"
 	"math"
+	"fmt"
+	"reflect"
 )
 
 const Tolerance = 0.000001
@@ -17,19 +19,11 @@ func NewNumberType() iType {
 }
 
 func (t *NumberType) Evaluate(obj interface{}, operator string, values interface{}) bool {
-	var pobj *string
-	if obj != nil {
-		var ok bool
-		pobj, ok = obj.(*string)
-		if !ok {
-			common.Log("obj must be pointer to a string")
-			return false
-		}
-	}
+	sobj := fmt.Sprintf("%v", obj)
 	var object float64
 	var err error
-	if pobj != nil {
-		object, err = strconv.ParseFloat(*pobj, 64)
+	if obj != nil {
+		object, err = strconv.ParseFloat(sobj, 64)
 	}
 	switch operator {
 	case Nan:
@@ -37,128 +31,120 @@ func (t *NumberType) Evaluate(obj interface{}, operator string, values interface
 	case An:
 		return err == nil
 	case Empty:
-		return pobj == nil
+		return obj == nil
 	case NotEmpty:
-		return pobj != nil
+		return obj != nil
 	case Eq:
-		if pobj == nil {
+		if obj == nil {
 			return false
 		}
-		valuestring, ok := values.(string)
-		if !ok {
-			return false
-		}
+		valuestring := fmt.Sprintf("%v", values)
 		value, err := strconv.ParseFloat(valuestring, 64)
 		if err != nil {
 			return false
 		}
 		return math.Abs(value - object) < Tolerance
 	case Ne:
-		if pobj == nil {
+		if obj == nil {
 			return false
 		}
-		valuestring, ok := values.(string)
-		if !ok {
-			return false
-		}
+		valuestring := fmt.Sprintf("%v", values)
 		value, err := strconv.ParseFloat(valuestring, 64)
 		if err != nil {
 			return true
 		}
 		return math.Abs(value - object) > Tolerance
 	case Gt:
-		if pobj == nil {
+		if obj == nil {
 			return false
 		}
-		valuestring, ok := values.(string)
-		if !ok {
-			return false
-		}
+		valuestring := fmt.Sprintf("%v", values)
 		value, err := strconv.ParseFloat(valuestring, 64)
 		if err != nil {
 			return false
 		}
 		return value < object
 	case Lt:
-		if pobj == nil {
+		if obj == nil {
 			return false
 		}
-		valuestring, ok := values.(string)
-		if !ok {
-			return false
-		}
+		valuestring := fmt.Sprintf("%v", values)
 		value, err := strconv.ParseFloat(valuestring, 64)
 		if err != nil {
 			return false
 		}
 		return object < value
 	case Gte:
-		if pobj == nil {
+		if obj == nil {
 			return false
 		}
-		valuestring, ok := values.(string)
-		if !ok {
-			return false
-		}
+		valuestring := fmt.Sprintf("%v", values)
 		value, err := strconv.ParseFloat(valuestring, 64)
 		if err != nil {
 			return false
 		}
 		return value < object || math.Abs(value - object) < Tolerance
 	case Lte:
-		if pobj == nil {
+		if obj == nil {
 			return false
 		}
-		valuestring, ok := values.(string)
-		if !ok {
-			return false
-		}
+		valuestring := fmt.Sprintf("%v", values)
 		value, err := strconv.ParseFloat(valuestring, 64)
 		if err != nil {
 			return false
 		}
 		return object < value || math.Abs(value - object) < Tolerance
 	case In:
-		if pobj == nil {
+		if obj == nil {
 			return false
 		}
-		valuesstring, ok := values.([]string)
-		if !ok {
+		vs := convertToInterfaceSlice(values)
+		if vs == nil {
 			return false
 		}
-		for _, s := range valuesstring {
-			if  *pobj == s {
+		for _, s := range vs {
+			s := fmt.Sprintf("%v", s)
+			v, err := strconv.ParseFloat(s, 64)
+			if err != nil {
+				continue
+			}
+			if math.Abs(v - object) < Tolerance {
 				return true
 			}
 		}
 		return false
 	case NotIn:
-		if pobj == nil {
+		if obj == nil {
 			return false
 		}
-		valuesstring, ok := values.([]string)
-		if !ok {
+		vs := convertToInterfaceSlice(values)
+		if vs == nil {
 			return false
 		}
-		for _, s := range valuesstring {
-			if  *pobj == s {
+		for _, s := range vs {
+			s := fmt.Sprintf("%v", s)
+			v, err := strconv.ParseFloat(s, 64)
+			if err != nil {
+				continue
+			}
+			if math.Abs(v - object) < Tolerance {
 				return false
 			}
 		}
 		return true
 	case InRange:
-		if pobj == nil {
+		if obj == nil {
 			return false
 		}
-		valuestring, ok := values.([]string)
-		if !ok || len(valuestring) < 2 {
+		vs := convertToInterfaceSlice(values)
+		if vs == nil || len(vs) < 2 {
 			return false
 		}
-		lower, err := strconv.ParseFloat(valuestring[0], 64)
+		lower, err := strconv.ParseFloat(fmt.Sprintf("%v", vs[0]), 64)
 		if err != nil {
 			return false
 		}
-		upper, err := strconv.ParseFloat(valuestring[1], 64)
+		upper, err := strconv.ParseFloat(fmt.Sprintf("%v", vs[1]), 64)
 		if err != nil {
 			return false
 		}
@@ -166,18 +152,18 @@ func (t *NumberType) Evaluate(obj interface{}, operator string, values interface
 			math.Abs(object - lower) < Tolerance ||
 			math.Abs(object - upper) < Tolerance
 	case NotInRange:
-		if pobj == nil {
+		if obj == nil {
 			return false
 		}
-		valuestring, ok := values.([]string)
-		if !ok || len(valuestring) < 2 {
+		vs := convertToInterfaceSlice(values)
+		if vs == nil || len(vs) < 2 {
 			return false
 		}
-		lower, err := strconv.ParseFloat(valuestring[0], 64)
+		lower, err := strconv.ParseFloat(fmt.Sprintf("%v", vs[0]), 64)
 		if err != nil {
 			return false
 		}
-		upper, err := strconv.ParseFloat(valuestring[1], 64)
+		upper, err := strconv.ParseFloat(fmt.Sprintf("%v", vs[1]), 64)
 		if err != nil {
 			return false
 		}
@@ -188,4 +174,17 @@ func (t *NumberType) Evaluate(obj interface{}, operator string, values interface
 		common.Panic(errors.New("unsupported operator"), "unsupported operator: " + operator)
 	}
 	return false
+}
+
+
+func convertToInterfaceSlice(slice interface{}) []interface{} {
+	s := reflect.ValueOf(slice)
+	if s.Kind() != reflect.Slice {
+		return nil
+	}
+	ret := make([]interface{}, s.Len())
+	for i:=0; i<s.Len(); i++ {
+		ret[i] = s.Index(i).Interface()
+	}
+	return ret
 }
