@@ -5,10 +5,12 @@ import (
 	"errors"
 )
 
+// StringsType set of strings type system
 type StringsType struct {
 	stringtype iType
 }
 
+// NewStringsType create new set of strings type system
 func NewStringsType() iType {
 	return &StringsType{
 		stringtype: NewStringType(),
@@ -45,44 +47,39 @@ func (t *StringsType) Evaluate(obj interface{} /*slice*/, operator string, value
 			return false
 		}
 	}
+	value := convertToStringSlice(values)
 	switch operator {
 	case Empty:
 		return len(object) == 0
 	case NotEmpty:
 		return len(object) != 0
 	case Eq:
-		value, ok := values.([]string)
-		if !ok {
+		if value == nil {
 			return false
 		}
 		return equals(object, value)
 	case Ne:
-		value, ok := values.([]string)
-		if !ok {
+		if value == nil {
 			return true
 		}
 		return equals(object, value)
 	case Subset:
-		value, ok := values.([]string)
-		if !ok {
+		if value == nil {
 			return false
 		}
 		return superset(value, object)
 	case NotSubset:
-		value, ok := values.([]string)
-		if !ok {
+		if value == nil {
 			return true
 		}
 		return !superset(value, object)
 	case Superset:
-		value, ok := values.([]string)
-		if !ok {
+		if value == nil {
 			return false
 		}
 		return superset(object, value)
 	case NotSuperset:
-		value, ok := values.([]string)
-		if !ok {
+		if value == nil {
 			return true
 		}
 		return !superset(object, value)

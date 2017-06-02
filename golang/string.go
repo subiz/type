@@ -7,9 +7,11 @@ import (
 	"errors"
 )
 
+// StringType string type system
 type StringType struct {
 }
 
+// NewStringType create new string type
 func NewStringType() *StringType {
 	return &StringType{}
 }
@@ -33,7 +35,6 @@ func (t *StringType) Evaluate(obj interface{}, operator string, values interface
 			return false
 		}
 	}
-
 	switch operator {
 	case Empty:
 		return obj == nil || len(strings.Trim(object, " ")) == 0
@@ -54,15 +55,15 @@ func (t *StringType) Evaluate(obj interface{}, operator string, values interface
 		common.Panic(err, "failed regex")
 		return matched
 	case In:
-		value, ok := values.([]string)
-		if !ok || obj == nil {
+		value := convertToStringSlice(values)
+		if value == nil {
 			return false
 		}
 		return contains(value, object)
 	case NotIn:
-		value, ok := values.([]string)
-		if !ok || obj == nil {
-			return false
+		value := convertToStringSlice(values)
+		if value == nil {
+			return true
 		}
 		return !contains(value, object)
 	case StartsWith:
