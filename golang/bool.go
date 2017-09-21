@@ -31,7 +31,7 @@ func (t *BoolType) Evaluate(obj interface{}, operator string, values interface{}
 	if obj != nil {
 		object, err = strconv.ParseBool(pobj)
 		if err != nil {
-			common.LogError("%v unable to parse value `%s` to bool", err, pobj)
+			common.Log("%v unable to parse value `%s` to bool", err, pobj)
 			return false
 		}
 	}
