@@ -2,7 +2,6 @@ package typesystem
 
 import (
 	"bitbucket.org/subiz/gocommon"
-	"errors"
 )
 
 // StringsType set of strings type system
@@ -147,7 +146,6 @@ func (t *StringsType) Evaluate(obj interface{} /*slice*/, operator string, value
 		}
 		return true
 	default:
-		common.Panic(errors.New("unsupported operator"), "unsupported operator: " + operator)
+		panic("unsupported operator: " + operator)
 	}
-	return false
 }

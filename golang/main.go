@@ -1,8 +1,6 @@
 package typesystem
 
 import (
-	"errors"
-	"bitbucket.org/subiz/gocommon"
 )
 
 type iType interface {
@@ -78,7 +76,7 @@ func (t *TypeSystem) Evaluate(typename string, object interface{}, op string, va
 		return t.stringsts.Evaluate(object, op, value)
 	case "date":
 	default:
-		common.Panic(errors.New("invalid type"), "unsupported type " + typename)
+		panic("unsupported type " + typename)
 	}
 	return false
 }

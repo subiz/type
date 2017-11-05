@@ -2,8 +2,6 @@ package typesystem
 
 import (
 	"strconv"
-	"bitbucket.org/subiz/gocommon"
-	"errors"
 	"math"
 	"fmt"
 )
@@ -170,7 +168,6 @@ func (t *NumberType) Evaluate(obj interface{}, operator string, values interface
 			math.Abs(object - lower) > Tolerance &&
 			math.Abs(object - upper) > Tolerance
 	default:
-		common.Panic(errors.New("unsupported operator"), "unsupported operator: " + operator)
+		panic("unsupported operator: " + operator)
 	}
-	return false
 }

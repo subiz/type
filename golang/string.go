@@ -4,7 +4,6 @@ import (
 	"strings"
 	"regexp"
 	"bitbucket.org/subiz/gocommon"
-	"errors"
 )
 
 // StringType string type system
@@ -31,7 +30,7 @@ func (t *StringType) Evaluate(obj interface{}, operator string, values interface
 		var ok bool
 		object, ok = obj.(string)
 		if !ok {
-			common.Log("obj must be a string, got `%v`", obj)
+			common.Logf("obj must be a string, got `%v`", obj)
 			return false
 		}
 	}
@@ -52,7 +51,9 @@ func (t *StringType) Evaluate(obj interface{}, operator string, values interface
 			return false
 		}
 		matched, err := regexp.MatchString(value, object)
-		common.Panic(err, "failed regex")
+		if err != nil {
+			panic("failed regex")
+		}
 		return matched
 	case In:
 		value := convertToStringSlice(values)
@@ -103,7 +104,6 @@ func (t *StringType) Evaluate(obj interface{}, operator string, values interface
 		}
 		return !strings.Contains(value, object)
 	default:
-		common.Panic(errors.New("unsupported operator"), "unsupported operator: " + operator)
+		panic("unsupported operator: " + operator)
 	}
-	return false
 }

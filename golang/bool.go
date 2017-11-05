@@ -3,7 +3,6 @@ package typesystem
 import (
 	"strconv"
 	"bitbucket.org/subiz/gocommon"
-	"errors"
 )
 
 // BoolType boolean type system
@@ -22,7 +21,7 @@ func (t *BoolType) Evaluate(obj interface{}, operator string, values interface{}
 		var ok bool
 		pobj, ok = obj.(string)
 		if !ok {
-			common.Log("obj must be a string, got `%s`", obj)
+			common.Logf("obj must be a string, got `%s`", obj)
 			return false
 		}
 	}
@@ -31,7 +30,7 @@ func (t *BoolType) Evaluate(obj interface{}, operator string, values interface{}
 	if obj != nil {
 		object, err = strconv.ParseBool(pobj)
 		if err != nil {
-			common.Log("%v unable to parse value `%s` to bool", err, pobj)
+			common.Logf("%v unable to parse value `%s` to bool", err, pobj)
 			return false
 		}
 	}
@@ -55,7 +54,6 @@ func (t *BoolType) Evaluate(obj interface{}, operator string, values interface{}
 		}
 		return !object
 	default:
-		common.Panic(errors.New("unsupported operator"), "unsupported operator: " + operator)
+		panic("unsupported operator: " + operator)
 	}
-	return false
 }
