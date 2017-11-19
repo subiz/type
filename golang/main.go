@@ -53,6 +53,14 @@ const (
 	True = "true"
 )
 
+const (
+	Strings = "set of strings"
+	String = "string"
+	Number = "number"
+	Boolean = "boolean"
+	Date = "date"
+)
+
 // NewTypeSystem create new type system
 func NewTypeSystem() *TypeSystem {
 	return &TypeSystem{
@@ -66,15 +74,15 @@ func NewTypeSystem() *TypeSystem {
 // Evaluate evalue a equation
 func (t *TypeSystem) Evaluate(typename string, object interface{}, op string, value interface{}) bool {
 	switch typename {
-	case "string":
+	case Strinng:
 		return t.stringts.Evaluate(object, op, value)
-	case "number":
+	case Number:
 		return t.numberts.Evaluate(object, op, value)
-	case "boolean":
+	case Boolean:
 		return t.boolts.Evaluate(object, op, value)
-	case "set of strings":
+	case Strings:
 		return t.stringsts.Evaluate(object, op, value)
-	case "date":
+	case Date:
 	default:
 		panic("unsupported type " + typename)
 	}
