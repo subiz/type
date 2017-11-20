@@ -11,7 +11,7 @@
   branch = "master"
   name = "bitbucket.org/subiz/header"
   packages = ["account","auth","client","common","content","conversation","event","lang","user"]
-  revision = "ad1e858b8508accb95453d6d2cff863dc2f3a35f"
+  revision = "b811c2dab484e05e95312258f94b4db16f2c5de1"
 
 [[projects]]
   name = "github.com/fatih/color"

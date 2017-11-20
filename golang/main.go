@@ -13,6 +13,7 @@ type TypeSystem struct {
 	numberts iType
 	boolts iType
 	stringsts iType
+	datets iType
 }
 
 const (
@@ -68,13 +69,14 @@ func NewTypeSystem() *TypeSystem {
 		numberts: NewNumberType(),
 		stringsts: NewStringsType(),
 		boolts: NewBoolType(),
+		datets: NewDateType(),
 	}
 }
 
 // Evaluate evalue a equation
 func (t *TypeSystem) Evaluate(typename string, object interface{}, op string, value interface{}) bool {
 	switch typename {
-	case Strinng:
+	case String:
 		return t.stringts.Evaluate(object, op, value)
 	case Number:
 		return t.numberts.Evaluate(object, op, value)
@@ -83,8 +85,8 @@ func (t *TypeSystem) Evaluate(typename string, object interface{}, op string, va
 	case Strings:
 		return t.stringsts.Evaluate(object, op, value)
 	case Date:
+		return t.datets.Evaluate(object, op, value)
 	default:
 		panic("unsupported type " + typename)
 	}
-	return false
 }
