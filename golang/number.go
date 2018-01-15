@@ -2,6 +2,7 @@ package typesystem
 
 import (
 	"strconv"
+	"bitbucket.org/subiz/gocommon"
 	"math"
 	"fmt"
 )
@@ -15,7 +16,7 @@ func NewNumberType() iType {
 	return &NumberType{}
 }
 
-func (t *NumberType) Evaluate(obj interface{}, operator string, values interface{}) bool {
+func (t *NumberType) Evaluate(obj interface{}, operator string, values string) bool {
 	sobj := fmt.Sprintf("%v", obj)
 	var object float64
 	var err error
@@ -35,8 +36,7 @@ func (t *NumberType) Evaluate(obj interface{}, operator string, values interface
 		if obj == nil {
 			return false
 		}
-		valuestring := fmt.Sprintf("%v", values)
-		value, err := strconv.ParseFloat(valuestring, 64)
+		value, err := strconv.ParseFloat(values, 64)
 		if err != nil {
 			return false
 		}
@@ -45,8 +45,7 @@ func (t *NumberType) Evaluate(obj interface{}, operator string, values interface
 		if obj == nil {
 			return false
 		}
-		valuestring := fmt.Sprintf("%v", values)
-		value, err := strconv.ParseFloat(valuestring, 64)
+		value, err := strconv.ParseFloat(values, 64)
 		if err != nil {
 			return true
 		}
@@ -55,8 +54,7 @@ func (t *NumberType) Evaluate(obj interface{}, operator string, values interface
 		if obj == nil {
 			return false
 		}
-		valuestring := fmt.Sprintf("%v", values)
-		value, err := strconv.ParseFloat(valuestring, 64)
+		value, err := strconv.ParseFloat(values, 64)
 		if err != nil {
 			return false
 		}
@@ -65,8 +63,7 @@ func (t *NumberType) Evaluate(obj interface{}, operator string, values interface
 		if obj == nil {
 			return false
 		}
-		valuestring := fmt.Sprintf("%v", values)
-		value, err := strconv.ParseFloat(valuestring, 64)
+		value, err := strconv.ParseFloat(values, 64)
 		if err != nil {
 			return false
 		}
@@ -75,8 +72,7 @@ func (t *NumberType) Evaluate(obj interface{}, operator string, values interface
 		if obj == nil {
 			return false
 		}
-		valuestring := fmt.Sprintf("%v", values)
-		value, err := strconv.ParseFloat(valuestring, 64)
+		value, err := strconv.ParseFloat(values, 64)
 		if err != nil {
 			return false
 		}
@@ -85,8 +81,7 @@ func (t *NumberType) Evaluate(obj interface{}, operator string, values interface
 		if obj == nil {
 			return false
 		}
-		valuestring := fmt.Sprintf("%v", values)
-		value, err := strconv.ParseFloat(valuestring, 64)
+		value, err := strconv.ParseFloat(values, 64)
 		if err != nil {
 			return false
 		}
@@ -95,17 +90,10 @@ func (t *NumberType) Evaluate(obj interface{}, operator string, values interface
 		if obj == nil {
 			return false
 		}
-		vs := convertToInterfaceSlice(values)
-		if vs == nil {
-			return false
-		}
-		for _, s := range vs {
-			s := fmt.Sprintf("%v", s)
-			v, err := strconv.ParseFloat(s, 64)
-			if err != nil {
-				continue
-			}
-			if math.Abs(v - object) < Tolerance {
+		fs := make([]float64, 0)
+		common.ParseJSON(values, &fs)
+		for _, f := range fs {
+			if math.Abs(f - object) < Tolerance {
 				return true
 			}
 		}
@@ -114,17 +102,10 @@ func (t *NumberType) Evaluate(obj interface{}, operator string, values interface
 		if obj == nil {
 			return false
 		}
-		vs := convertToInterfaceSlice(values)
-		if vs == nil {
-			return false
-		}
-		for _, s := range vs {
-			s := fmt.Sprintf("%v", s)
-			v, err := strconv.ParseFloat(s, 64)
-			if err != nil {
-				continue
-			}
-			if math.Abs(v - object) < Tolerance {
+		fs := make([]float64, 0)
+		common.ParseJSON(values, &fs)
+		for _, f := range fs {
+			if math.Abs(f - object) < Tolerance {
 				return false
 			}
 		}
@@ -133,18 +114,12 @@ func (t *NumberType) Evaluate(obj interface{}, operator string, values interface
 		if obj == nil {
 			return false
 		}
-		vs := convertToInterfaceSlice(values)
-		if vs == nil || len(vs) < 2 {
+		fs := make([]float64, 0)
+		common.ParseJSON(values, &fs)
+		if len(fs) < 2 {
 			return false
 		}
-		lower, err := strconv.ParseFloat(fmt.Sprintf("%v", vs[0]), 64)
-		if err != nil {
-			return false
-		}
-		upper, err := strconv.ParseFloat(fmt.Sprintf("%v", vs[1]), 64)
-		if err != nil {
-			return false
-		}
+		lower, upper := fs[0], fs[1]
 		return lower < object && object < upper ||
 			math.Abs(object - lower) < Tolerance ||
 			math.Abs(object - upper) < Tolerance
@@ -152,18 +127,13 @@ func (t *NumberType) Evaluate(obj interface{}, operator string, values interface
 		if obj == nil {
 			return false
 		}
+		fs := make([]float64, 0)
+		common.ParseJSON(values, &fs)
 		vs := convertToInterfaceSlice(values)
-		if vs == nil || len(vs) < 2 {
+		if len(vs) < 2 {
 			return false
 		}
-		lower, err := strconv.ParseFloat(fmt.Sprintf("%v", vs[0]), 64)
-		if err != nil {
-			return false
-		}
-		upper, err := strconv.ParseFloat(fmt.Sprintf("%v", vs[1]), 64)
-		if err != nil {
-			return false
-		}
+		lower, upper := fs[0], fs[1]
 		return object < lower || upper < object &&
 			math.Abs(object - lower) > Tolerance &&
 			math.Abs(object - upper) > Tolerance

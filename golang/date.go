@@ -13,7 +13,8 @@ func NewDateType() iType {
 	return &DateType{}
 }
 
-func (t *DateType) Evaluate(obj interface{}, operator string, values interface{}) bool {
+// values is in json format
+func (t *DateType) Evaluate(obj interface{}, operator string, values string) bool {
 	sobj := fmt.Sprintf("%v", obj)
 	var object float64
 	var err error
@@ -21,7 +22,7 @@ func (t *DateType) Evaluate(obj interface{}, operator string, values interface{}
 		object, err = strconv.ParseFloat(sobj, 64)
 	}
 	switch operator {
-	case Nan:
+	case Nad:
 		return err != nil
 	case An:
 		return err == nil

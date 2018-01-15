@@ -36,7 +36,7 @@ func equals(a []string, b []string) bool {
 	return superset(a, b) && superset(b, a)
 }
 
-func (t *StringsType) Evaluate(obj interface{} /*slice*/, operator string, values interface{}) bool {
+func (t *StringsType) Evaluate(obj interface{} /*slice*/, operator string, values string) bool {
 	var object []string
 	if obj != nil {
 		var ok bool
@@ -46,41 +46,34 @@ func (t *StringsType) Evaluate(obj interface{} /*slice*/, operator string, value
 			return false
 		}
 	}
-	value := convertToStringSlice(values)
 	switch operator {
 	case Empty:
 		return len(object) == 0
 	case NotEmpty:
 		return len(object) != 0
 	case Eq:
-		if value == nil {
-			return false
-		}
+		value := make([]string, 0)
+		common.ParseJSON(values, &value)
 		return equals(object, value)
 	case Ne:
-		if value == nil {
-			return true
-		}
+		value := make([]string, 0)
+		common.ParseJSON(values, &value)
 		return equals(object, value)
 	case Subset:
-		if value == nil {
-			return false
-		}
+		value := make([]string, 0)
+		common.ParseJSON(values, &value)
 		return superset(value, object)
 	case NotSubset:
-		if value == nil {
-			return true
-		}
+		value := make([]string, 0)
+		common.ParseJSON(values, &value)
 		return !superset(value, object)
 	case Superset:
-		if value == nil {
-			return false
-		}
+		value := make([]string, 0)
+		common.ParseJSON(values, &value)
 		return superset(object, value)
 	case NotSuperset:
-		if value == nil {
-			return true
-		}
+		value := make([]string, 0)
+		common.ParseJSON(values, &value)
 		return !superset(object, value)
 	case Regex:
 		for _, s := range object {

@@ -4,7 +4,7 @@ import (
 )
 
 type iType interface {
-	Evaluate(object interface{}, opstring string, value interface{}) bool
+	Evaluate(object interface{}, opstring string, value string) bool
 }
 
 // TypeSystem abc
@@ -74,7 +74,7 @@ func NewTypeSystem() *TypeSystem {
 }
 
 // Evaluate evalue a equation
-func (t *TypeSystem) Evaluate(typename string, object interface{}, op string, value interface{}) bool {
+func (t *TypeSystem) Evaluate(typename string, object interface{}, op string, value string) bool {
 	switch typename {
 	case String:
 		return t.stringts.Evaluate(object, op, value)

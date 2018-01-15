@@ -24,7 +24,7 @@ func contains(s []string, e string) bool {
 	return false
 }
 
-func (t *StringType) Evaluate(obj interface{}, operator string, values interface{}) bool {
+func (t *StringType) Evaluate(obj interface{}, operator string, values string) bool {
 	var object string
 	if obj != nil {
 		var ok bool
@@ -40,68 +40,52 @@ func (t *StringType) Evaluate(obj interface{}, operator string, values interface
 	case NotEmpty:
 		return obj != nil && len(strings.Trim(object, " ")) != 0
 	case Eq:
-		value, ok := values.(string)
-		return ok && object == value
+		var value string
+		common.ParseJSON(values, &value)
+		return object == value
 	case Ne:
-		value, ok := values.(string)
-		return !ok || object != value
+		var value string
+		common.ParseJSON(values, &value)
+		return object != value
 	case Regex:
-		value, ok := values.(string)
-		if !ok || obj == nil {
-			return false
-		}
+		var value string
+		common.ParseJSON(values, &value)
 		matched, err := regexp.MatchString(value, object)
 		if err != nil {
 			panic("failed regex")
 		}
 		return matched
 	case In:
-		value := convertToStringSlice(values)
-		if value == nil {
-			return false
-		}
+		value := make([]string, 0)
+		common.ParseJSON(values, &value)
 		return contains(value, object)
 	case NotIn:
-		value := convertToStringSlice(values)
-		if value == nil {
-			return true
-		}
+		value := make([]string, 0)
+		common.ParseJSON(values, &value)
 		return !contains(value, object)
 	case StartsWith:
-		value, ok := values.(string)
-		if !ok || obj == nil {
-			return false
-		}
+		var value string
+		common.ParseJSON(values, &value)
 		return  strings.HasPrefix(object, value)
 	case NotStartsWith:
-		value, ok := values.(string)
-		if !ok || obj == nil {
-			return false
-		}
+		var value string
+		common.ParseJSON(values, &value)
 		return  strings.HasPrefix(object, value)
 	case EndsWith:
-		value, ok := values.(string)
-		if !ok || obj == nil {
-			return false
-		}
+		var value string
+		common.ParseJSON(values, &value)
 		return strings.HasSuffix(object, value)
 	case NotEndsWith:
-		value, ok := values.(string)
-		if !ok || obj == nil {
-			return false
-		}
+		var value string
+		common.ParseJSON(values, &value)
 		return !strings.HasSuffix(object, value)
 	case Contains:
-		value, ok := values.(string)
-		if !ok || obj == nil {
-			return false
-		}
+		var value string
+		common.ParseJSON(values, &value)
 		return strings.Contains(value, object)
 	case NotContains:
-		value, ok := values.(string)
-		if !ok || obj == nil {
-			return false
-		}
+		var value string
+		common.ParseJSON(values, &value)
 		return !strings.Contains(value, object)
 	default:
 		panic("unsupported operator: " + operator)

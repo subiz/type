@@ -15,7 +15,7 @@ func NewBoolType() *BoolType {
 }
 
 // Evaluate operator(object, values) == true
-func (t *BoolType) Evaluate(obj interface{}, operator string, values interface{}) bool {
+func (t *BoolType) Evaluate(obj interface{}, operator string, values string) bool {
 	var pobj string
 	if obj != nil {
 		var ok bool
