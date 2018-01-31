@@ -1,6 +1,7 @@
 package typesystem
 
 import (
+	json "github.com/pquerna/ffjson/ffjson"
 	"bitbucket.org/subiz/gocommon"
 )
 
@@ -53,27 +54,27 @@ func (t *StringsType) Evaluate(obj interface{} /*slice*/, operator string, value
 		return len(object) != 0
 	case Eq:
 		value := make([]string, 0)
-		common.ParseJSON(values, &value)
+		json.Unmarshal([]byte(values), &value)
 		return equals(object, value)
 	case Ne:
 		value := make([]string, 0)
-		common.ParseJSON(values, &value)
+		json.Unmarshal([]byte(values), &value)
 		return equals(object, value)
 	case Subset:
 		value := make([]string, 0)
-		common.ParseJSON(values, &value)
+		json.Unmarshal([]byte(values), &value)
 		return superset(value, object)
 	case NotSubset:
 		value := make([]string, 0)
-		common.ParseJSON(values, &value)
+		json.Unmarshal([]byte(values), &value)
 		return !superset(value, object)
 	case Superset:
 		value := make([]string, 0)
-		common.ParseJSON(values, &value)
+		json.Unmarshal([]byte(values), &value)
 		return superset(object, value)
 	case NotSuperset:
 		value := make([]string, 0)
-		common.ParseJSON(values, &value)
+		json.Unmarshal([]byte(values), &value)
 		return !superset(object, value)
 	case Regex:
 		for _, s := range object {
