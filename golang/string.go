@@ -17,7 +17,7 @@ func NewStringType() *StringType {
 
 func contains(s []string, e string) bool {
 	for _, a := range s {
-		if strings.ToLower(strings.Trim(a, " ")) == strings.ToLower(strings.Trim(e, " ")) {
+		if strings.ToLower(strings.TrimSpace(a)) == strings.ToLower(strings.TrimSpace(e)) {
 			return true
 		}
 	}
@@ -36,9 +36,9 @@ func (t *StringType) Evaluate(obj interface{}, operator string, values string) b
 	}
 	switch operator {
 	case Empty:
-		return obj == nil || len(strings.Trim(object, " ")) == 0
+		return obj == nil || len(strings.TrimSpace(object)) == 0
 	case NotEmpty:
-		return obj != nil && len(strings.Trim(object, " ")) != 0
+		return obj != nil && len(strings.TrimSpace(object)) != 0
 	case Eq:
 		var value string
 		common.ParseJSON(values, &value)
