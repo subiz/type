@@ -81,6 +81,7 @@ func (t *StringType) Evaluate(obj interface{}, operator string, values string) b
 		return !strings.HasSuffix(object, value)
 	case Contains:
 		var value string
+		common.ParseJSON(values, &value)
 		return strings.Contains(object, value)
 	case NotContains:
 		var value string
