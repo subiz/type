@@ -2,7 +2,7 @@ package typesystem
 
 import (
 	"strconv"
-	"bitbucket.org/subiz/gocommon"
+	json "github.com/pquerna/ffjson/ffjson"
 	"math"
 	"fmt"
 )
@@ -14,6 +14,12 @@ type NumberType struct {
 
 func NewNumberType() iType {
 	return &NumberType{}
+}
+
+func parseJSON(j string, out interface{}) {
+	if err := json.Unmarshal([]byte(j), out); err != nil {
+		panic(err)
+	}
 }
 
 func (t *NumberType) Evaluate(obj interface{}, operator string, values string) bool {
@@ -91,7 +97,7 @@ func (t *NumberType) Evaluate(obj interface{}, operator string, values string) b
 			return false
 		}
 		fs := make([]float64, 0)
-		common.ParseJSON(values, &fs)
+		parseJSON(values, &fs)
 		for _, f := range fs {
 			if math.Abs(f - object) < Tolerance {
 				return true
@@ -103,7 +109,7 @@ func (t *NumberType) Evaluate(obj interface{}, operator string, values string) b
 			return false
 		}
 		fs := make([]float64, 0)
-		common.ParseJSON(values, &fs)
+		parseJSON(values, &fs)
 		for _, f := range fs {
 			if math.Abs(f - object) < Tolerance {
 				return false
@@ -115,7 +121,7 @@ func (t *NumberType) Evaluate(obj interface{}, operator string, values string) b
 			return false
 		}
 		fs := make([]float64, 0)
-		common.ParseJSON(values, &fs)
+		parseJSON(values, &fs)
 		if len(fs) < 2 {
 			return false
 		}
@@ -128,7 +134,7 @@ func (t *NumberType) Evaluate(obj interface{}, operator string, values string) b
 			return false
 		}
 		fs := make([]float64, 0)
-		common.ParseJSON(values, &fs)
+		parseJSON(values, &fs)
 		vs := convertToInterfaceSlice(values)
 		if len(vs) < 2 {
 			return false

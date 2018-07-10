@@ -2,7 +2,7 @@ package typesystem
 
 import (
 	"strconv"
-	"bitbucket.org/subiz/gocommon"
+	"fmt"
 )
 
 // BoolType boolean type system
@@ -21,7 +21,7 @@ func (t *BoolType) Evaluate(obj interface{}, operator string, values string) boo
 		var ok bool
 		pobj, ok = obj.(string)
 		if !ok {
-			common.Logf("obj must be a string, got `%s`", obj)
+			fmt.Printf("type/golang/bool.go: obj must be a string, got `%s`\n", obj)
 			return false
 		}
 	}
@@ -30,7 +30,7 @@ func (t *BoolType) Evaluate(obj interface{}, operator string, values string) boo
 	if obj != nil {
 		object, err = strconv.ParseBool(pobj)
 		if err != nil {
-			common.Logf("%v unable to parse value `%s` to bool", err, pobj)
+			fmt.Printf("type/golang/bool.go: %v unable to parse value `%s` to bool\n", err, pobj)
 			return false
 		}
 	}

@@ -1,8 +1,8 @@
 package typesystem
 
 import (
+	"fmt"
 	json "github.com/pquerna/ffjson/ffjson"
-	"bitbucket.org/subiz/gocommon"
 )
 
 // StringsType set of strings type system
@@ -43,7 +43,7 @@ func (t *StringsType) Evaluate(obj interface{} /*slice*/, operator string, value
 		var ok bool
 		object, ok = obj.([]string)
 		if !ok {
-			common.Log("obj must be a slice")
+			fmt.Printf("type/golang/strings.go: obj must be a slice\n")
 			return false
 		}
 	}

@@ -1,9 +1,9 @@
 package typesystem
 
 import (
-	"strings"
+	"fmt"
 	"regexp"
-	"bitbucket.org/subiz/gocommon"
+	"strings"
 )
 
 // StringType string type system
@@ -30,7 +30,7 @@ func (t *StringType) Evaluate(obj interface{}, operator string, values string) b
 		var ok bool
 		object, ok = obj.(string)
 		if !ok {
-			common.Logf("obj must be a string, got `%v`", obj)
+			fmt.Printf("type/golang/string.go: obj must be a string, got `%v`\n", obj)
 			return false
 		}
 	}
@@ -41,15 +41,15 @@ func (t *StringType) Evaluate(obj interface{}, operator string, values string) b
 		return obj != nil && len(strings.TrimSpace(object)) != 0
 	case Eq:
 		var value string
-		common.ParseJSON(values, &value)
+		parseJSON(values, &value)
 		return object == value
 	case Ne:
 		var value string
-		common.ParseJSON(values, &value)
+		parseJSON(values, &value)
 		return object != value
 	case Regex:
 		var value string
-		common.ParseJSON(values, &value)
+		parseJSON(values, &value)
 		matched, err := regexp.MatchString(value, object)
 		if err != nil {
 			panic("failed regex")
@@ -57,35 +57,35 @@ func (t *StringType) Evaluate(obj interface{}, operator string, values string) b
 		return matched
 	case In:
 		value := make([]string, 0)
-		common.ParseJSON(values, &value)
+		parseJSON(values, &value)
 		return contains(value, object)
 	case NotIn:
 		value := make([]string, 0)
-		common.ParseJSON(values, &value)
+		parseJSON(values, &value)
 		return !contains(value, object)
 	case StartsWith:
 		var value string
-		common.ParseJSON(values, &value)
-		return  strings.HasPrefix(object, value)
+		parseJSON(values, &value)
+		return strings.HasPrefix(object, value)
 	case NotStartsWith:
 		var value string
-		common.ParseJSON(values, &value)
-		return  strings.HasPrefix(object, value)
+		parseJSON(values, &value)
+		return strings.HasPrefix(object, value)
 	case EndsWith:
 		var value string
-		common.ParseJSON(values, &value)
+		parseJSON(values, &value)
 		return strings.HasSuffix(object, value)
 	case NotEndsWith:
 		var value string
-		common.ParseJSON(values, &value)
+		parseJSON(values, &value)
 		return !strings.HasSuffix(object, value)
 	case Contains:
 		var value string
-		common.ParseJSON(values, &value)
+		parseJSON(values, &value)
 		return strings.Contains(object, value)
 	case NotContains:
 		var value string
-		common.ParseJSON(values, &value)
+		parseJSON(values, &value)
 		return !strings.Contains(object, value)
 	default:
 		panic("unsupported operator: " + operator)
