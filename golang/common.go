@@ -1,8 +1,9 @@
 package typesystem
 
 import (
-	"reflect"
 	"fmt"
+	json "github.com/pquerna/ffjson/ffjson"
+	"reflect"
 )
 
 func convertToInterfaceSlice(slice interface{}) []interface{} {
@@ -11,12 +12,11 @@ func convertToInterfaceSlice(slice interface{}) []interface{} {
 		return nil
 	}
 	ret := make([]interface{}, s.Len())
-	for i:=0; i<s.Len(); i++ {
+	for i := 0; i < s.Len(); i++ {
 		ret[i] = s.Index(i).Interface()
 	}
 	return ret
 }
-
 
 func convertToStringSlice(slice interface{}) []string {
 	s := reflect.ValueOf(slice)
@@ -24,8 +24,15 @@ func convertToStringSlice(slice interface{}) []string {
 		return nil
 	}
 	ret := make([]string, s.Len())
-	for i:=0; i<s.Len(); i++ {
+	for i := 0; i < s.Len(); i++ {
 		ret[i] = fmt.Sprintf("%v", s.Index(i).Interface())
 	}
 	return ret
+}
+
+func parseJSON(j string, out interface{}) error {
+	if err := json.Unmarshal([]byte(j), out); err != nil {
+		return err
+	}
+	return nil
 }

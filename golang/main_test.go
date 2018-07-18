@@ -5,6 +5,7 @@ import (
 )
 
 var ts = NewTypeSystem()
+
 func TearUp(t *testing.T) {
 
 }

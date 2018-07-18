@@ -2,7 +2,6 @@ package typesystem
 
 import (
 	"fmt"
-	json "github.com/pquerna/ffjson/ffjson"
 )
 
 // StringsType set of strings type system
@@ -37,109 +36,120 @@ func equals(a []string, b []string) bool {
 	return superset(a, b) && superset(b, a)
 }
 
-func (t *StringsType) Evaluate(obj interface{} /*slice*/, operator string, values string) bool {
+func (t *StringsType) Evaluate(obj interface{} /*slice*/, operator string, values string) (bool, error) {
 	var object []string
 	if obj != nil {
 		var ok bool
 		object, ok = obj.([]string)
 		if !ok {
-			fmt.Printf("type/golang/strings.go: obj must be a slice\n")
-			return false
+			return false, fmt.Errorf("type/golang/strings.go: obj must be a slice\n")
 		}
 	}
 	switch operator {
 	case Empty:
-		return len(object) == 0
+		return len(object) == 0, nil
 	case NotEmpty:
-		return len(object) != 0
+		return len(object) != 0, nil
 	case Eq:
 		value := make([]string, 0)
-		json.Unmarshal([]byte(values), &value)
-		return equals(object, value)
+		if err := parseJSON(values, &values); err != nil {
+			return false, err
+		}
+		return equals(object, value), nil
 	case Ne:
 		value := make([]string, 0)
-		json.Unmarshal([]byte(values), &value)
-		return equals(object, value)
+		if err := parseJSON(values, &values); err != nil {
+			return false, err
+		}
+		return equals(object, value), nil
 	case Subset:
 		value := make([]string, 0)
-		json.Unmarshal([]byte(values), &value)
-		return superset(value, object)
+		if err := parseJSON(values, &values); err != nil {
+			return false, err
+		}
+		return superset(value, object), nil
 	case NotSubset:
 		value := make([]string, 0)
-		json.Unmarshal([]byte(values), &value)
-		return !superset(value, object)
+		if err := parseJSON(values, &values); err != nil {
+			return false, err
+		}
+		return !superset(value, object), nil
 	case Superset:
 		value := make([]string, 0)
-		json.Unmarshal([]byte(values), &value)
-		return superset(object, value)
+		if err := parseJSON(values, &values); err != nil {
+			return false, err
+		}
+		return superset(object, value), nil
 	case NotSuperset:
 		value := make([]string, 0)
-		json.Unmarshal([]byte(values), &value)
-		return !superset(object, value)
+		if err := parseJSON(values, &values); err != nil {
+			return false, err
+		}
+		return !superset(object, value), nil
 	case Regex:
 		for _, s := range object {
-			if t.stringtype.Evaluate(s, Regex, values) {
-				return true
+			if o, _ := t.stringtype.Evaluate(s, Regex, values); o {
+				return true, nil
 			}
 		}
-		return false
+		return false, nil
 	case In:
 		for _, s := range object {
-			if t.stringtype.Evaluate(s, In, values) {
-				return true
+			if o, _ := t.stringtype.Evaluate(s, In, values); o {
+				return true, nil
 			}
 		}
-		return false
+		return false, nil
 	case NotIn:
 		for _, s := range object {
-			if t.stringtype.Evaluate(s, In, values) {
-				return false
+			if o, _ := t.stringtype.Evaluate(s, In, values); o {
+				return false, nil
 			}
 		}
-		return true
+		return true, nil
 	case StartsWith:
 		for _, s := range object {
-			if t.stringtype.Evaluate(s, StartsWith, values) {
-				return true
+			if o, _ := t.stringtype.Evaluate(s, StartsWith, values); o {
+				return true, nil
 			}
 		}
-		return false
+		return false, nil
 	case EndsWith:
 		for _, s := range object {
-			if t.stringtype.Evaluate(s, EndsWith, values) {
-				return true
+			if o, _ := t.stringtype.Evaluate(s, EndsWith, values); o {
+				return true, nil
 			}
 		}
-		return false
+		return false, nil
 	case NotStartsWith:
 		for _, s := range object {
-			if t.stringtype.Evaluate(s, StartsWith, values) {
-				return false
+			if o, _ := t.stringtype.Evaluate(s, StartsWith, values); o {
+				return false, nil
 			}
 		}
-		return true
+		return true, nil
 	case NotEndsWith:
 		for _, s := range object {
-			if t.stringtype.Evaluate(s, EndsWith, values) {
-				return false
+			if o, _ := t.stringtype.Evaluate(s, EndsWith, values); o {
+				return false, nil
 			}
 		}
-		return true
+		return true, nil
 	case Contains:
 		for _, s := range object {
-			if t.stringtype.Evaluate(s, Contains, values) {
-				return true
+			if o, _ := t.stringtype.Evaluate(s, Contains, values); o {
+				return true, nil
 			}
 		}
-		return false
+		return false, nil
 	case NotContains:
 		for _, s := range object {
-			if t.stringtype.Evaluate(s, Contains, values) {
-				return false
+			if o, _ := t.stringtype.Evaluate(s, Contains, values); o {
+				return false, nil
 			}
 		}
-		return true
+		return true, nil
 	default:
-		panic("unsupported operator: " + operator)
+		return false, fmt.Errorf("type/golang/strings.go: unsupport operator, %v, %s, %s", obj, operator, values)
 	}
 }

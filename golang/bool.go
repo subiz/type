@@ -1,8 +1,8 @@
 package typesystem
 
 import (
-	"strconv"
 	"fmt"
+	"strconv"
 )
 
 // BoolType boolean type system
@@ -15,7 +15,7 @@ func NewBoolType() *BoolType {
 }
 
 // Evaluate operator(object, values) == true
-func (t *BoolType) Evaluate(obj interface{}, operator string, values string) bool {
+func (t *BoolType) Evaluate(obj interface{}, operator string, values string) (bool, error) {
 	var pobj string
 	var err error
 	var object bool
@@ -31,36 +31,34 @@ func (t *BoolType) Evaluate(obj interface{}, operator string, values string) boo
 		var ok bool
 		pobj, ok = obj.(string)
 		if !ok {
-			fmt.Printf("type/golang/bool.go: obj must be a string or a bool, got `%v`\n", obj)
-			return false
+			return false, fmt.Errorf("type/golang/bool.go: obj must be a string or a bool, got `%v`\n", obj)
 		}
 
 		object, err = strconv.ParseBool(pobj)
 		if err != nil {
-			fmt.Printf("type/golang/bool.go: %v unable to parse value `%s` to bool\n", err, pobj)
-			return false
+			return false, fmt.Errorf("type/golang/bool.go: %v unable to parse value `%s` to bool\n", err, pobj)
 		}
 	}
 	switch operator {
 	case Nab:
-		return err != nil
+		return err != nil, nil
 	case Ab:
-		return err == nil
+		return err == nil, nil
 	case Empty:
-		return obj == nil
+		return obj == nil, nil
 	case NotEmpty:
-		return obj != nil
+		return obj != nil, nil
 	case True:
 		if obj == nil {
-			return false
+			return false, nil
 		}
-		return object
+		return object, nil
 	case False:
 		if obj == nil {
-			return true
+			return true, nil
 		}
-		return !object
+		return !object, nil
 	default:
-		panic("unsupported operator: " + operator)
+		return false, fmt.Errorf("type/golang/bool.go: unsupport operator, %v, %s, %s", obj, operator, values)
 	}
 }

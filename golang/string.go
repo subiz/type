@@ -24,70 +24,87 @@ func contains(s []string, e string) bool {
 	return false
 }
 
-func (t *StringType) Evaluate(obj interface{}, operator string, values string) bool {
+func (t *StringType) Evaluate(obj interface{}, operator string, values string) (bool, error) {
 	var object string
 	if obj != nil {
 		var ok bool
 		object, ok = obj.(string)
 		if !ok {
-			fmt.Printf("type/golang/string.go: obj must be a string, got `%v`\n", obj)
-			return false
+			return false, fmt.Errorf("type/golang/string.go: obj must be a string, got `%v`\n", obj)
 		}
 	}
 	switch operator {
 	case Empty:
-		return obj == nil || len(strings.TrimSpace(object)) == 0
+		return obj == nil || len(strings.TrimSpace(object)) == 0, nil
 	case NotEmpty:
-		return obj != nil && len(strings.TrimSpace(object)) != 0
+		return obj != nil && len(strings.TrimSpace(object)) != 0, nil
 	case Eq:
 		var value string
-		parseJSON(values, &value)
-		return object == value
+		if err := parseJSON(values, &value); err != nil {
+			return false, err
+		}
+		return object == value, nil
 	case Ne:
 		var value string
-		parseJSON(values, &value)
-		return object != value
+		if err := parseJSON(values, &value); err != nil {
+			return false, err
+		}
+		return object != value, nil
 	case Regex:
 		var value string
-		parseJSON(values, &value)
-		matched, err := regexp.MatchString(value, object)
-		if err != nil {
-			panic("failed regex")
+		if err := parseJSON(values, &value); err != nil {
+			return false, err
 		}
-		return matched
+		return regexp.MatchString(value, object)
 	case In:
 		value := make([]string, 0)
-		parseJSON(values, &value)
-		return contains(value, object)
+		if err := parseJSON(values, &value); err != nil {
+			return false, err
+		}
+		return contains(value, object), nil
 	case NotIn:
 		value := make([]string, 0)
-		parseJSON(values, &value)
-		return !contains(value, object)
+		if err := parseJSON(values, &value); err != nil {
+			return false, err
+		}
+		return !contains(value, object), nil
 	case StartsWith:
 		var value string
-		parseJSON(values, &value)
-		return strings.HasPrefix(object, value)
+		if err := parseJSON(values, &value); err != nil {
+			return false, err
+		}
+		return strings.HasPrefix(object, value), nil
 	case NotStartsWith:
 		var value string
-		parseJSON(values, &value)
-		return strings.HasPrefix(object, value)
+		if err := parseJSON(values, &value); err != nil {
+			return false, err
+		}
+		return strings.HasPrefix(object, value), nil
 	case EndsWith:
 		var value string
-		parseJSON(values, &value)
-		return strings.HasSuffix(object, value)
+		if err := parseJSON(values, &value); err != nil {
+			return false, err
+		}
+		return strings.HasSuffix(object, value), nil
 	case NotEndsWith:
 		var value string
-		parseJSON(values, &value)
-		return !strings.HasSuffix(object, value)
+		if err := parseJSON(values, &value); err != nil {
+			return false, err
+		}
+		return !strings.HasSuffix(object, value), nil
 	case Contains:
 		var value string
-		parseJSON(values, &value)
-		return strings.Contains(object, value)
+		if err := parseJSON(values, &value); err != nil {
+			return false, err
+		}
+		return strings.Contains(object, value), nil
 	case NotContains:
 		var value string
-		parseJSON(values, &value)
-		return !strings.Contains(object, value)
+		if err := parseJSON(values, &value); err != nil {
+			return false, err
+		}
+		return !strings.Contains(object, value), nil
 	default:
-		panic("unsupported operator: " + operator)
+		return false, fmt.Errorf("type/golang/string.go: unsupport operator, %v, %s, %s", obj, operator, values)
 	}
 }
