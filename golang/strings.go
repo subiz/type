@@ -52,37 +52,37 @@ func (t *StringsType) Evaluate(obj interface{} /*slice*/, operator string, value
 		return len(object) != 0, nil
 	case Eq:
 		value := make([]string, 0)
-		if err := parseJSON(values, &values); err != nil {
+		if err := parseJSON(values, &value); err != nil {
 			return false, err
 		}
 		return equals(object, value), nil
 	case Ne:
 		value := make([]string, 0)
-		if err := parseJSON(values, &values); err != nil {
+		if err := parseJSON(values, &value); err != nil {
 			return false, err
 		}
 		return equals(object, value), nil
 	case Subset:
 		value := make([]string, 0)
-		if err := parseJSON(values, &values); err != nil {
+		if err := parseJSON(values, &value); err != nil {
 			return false, err
 		}
 		return superset(value, object), nil
 	case NotSubset:
 		value := make([]string, 0)
-		if err := parseJSON(values, &values); err != nil {
+		if err := parseJSON(values, &value); err != nil {
 			return false, err
 		}
 		return !superset(value, object), nil
 	case Superset:
 		value := make([]string, 0)
-		if err := parseJSON(values, &values); err != nil {
+		if err := parseJSON(values, &value); err != nil {
 			return false, err
 		}
 		return superset(object, value), nil
 	case NotSuperset:
 		value := make([]string, 0)
-		if err := parseJSON(values, &values); err != nil {
+		if err := parseJSON(values, &value); err != nil {
 			return false, err
 		}
 		return !superset(object, value), nil
