@@ -77,49 +77,49 @@ func TestBoolConvToEls(t *testing.T) {
 
 func TestStrConvToEls(t *testing.T) {
 	fmt.Println("---- String ----")
-	query, err := ts.stringts.ConvToEls("name", "eq", "viet")
+	query, err := ts.stringts.ConvToEls("name", "eq", "\"viet\"")
 	if err != nil {
 		t.Fatal(err)
 	}
 	fmt.Println(query)
 
-	query, err = ts.stringts.ConvToEls("name", "ne", "viet")
+	query, err = ts.stringts.ConvToEls("name", "ne", "\"viet\"")
 	if err != nil {
 		t.Fatal(err)
 	}
 	fmt.Println(query)
 
-	query, err = ts.stringts.ConvToEls("name", "begin", "vi")
+	query, err = ts.stringts.ConvToEls("name", "begin", "\"vi\"")
 	if err != nil {
 		t.Fatal(err)
 	}
 	fmt.Println(query)
 
-	query, err = ts.stringts.ConvToEls("name", "notBegin", "vi")
+	query, err = ts.stringts.ConvToEls("name", "notBegin", "\"vi\"")
 	if err != nil {
 		t.Fatal(err)
 	}
 	fmt.Println(query)
 
-	query, err = ts.stringts.ConvToEls("name", "end", "t")
+	query, err = ts.stringts.ConvToEls("name", "end", "\"t\"")
 	if err != nil {
 		t.Fatal(err)
 	}
 	fmt.Println(query)
 
-	query, err = ts.stringts.ConvToEls("name", "notEnd", "t")
+	query, err = ts.stringts.ConvToEls("name", "notEnd", "\"t\"")
 	if err != nil {
 		t.Fatal(err)
 	}
 	fmt.Println(query)
 
-	query, err = ts.stringts.ConvToEls("name", "con", "ie")
+	query, err = ts.stringts.ConvToEls("name", "con", "\"ie\"")
 	if err != nil {
 		t.Fatal(err)
 	}
 	fmt.Println(query)
 
-	query, err = ts.stringts.ConvToEls("name", "notCon", "viet")
+	query, err = ts.stringts.ConvToEls("name", "notCon", "\"viet\"")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -129,7 +129,7 @@ func TestStrConvToEls(t *testing.T) {
 
 func TestNumberConvToEls(t *testing.T) {
 	fmt.Println("---- Number ----")
-	query, err := ts.numberts.ConvToEls("age", "eq", "10")
+	query, err := ts.numberts.ConvToEls("ag\"e", "eq", "10")
 	fmt.Println(query)
 	if err != nil {
 		t.Fatal(err)

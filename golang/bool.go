@@ -25,9 +25,9 @@ func (t *BoolType) ConvToEls(key, operator, value string) (string, error) {
 	// case NotEmpty:
 	// 	return obj != nil, nil
 	case True:
-		return fmt.Sprintf(`{"must": {"term": { "%s", %t}}}`, key, true), nil
+		return fmt.Sprintf(`{"must": {"term": { %q: %t}}}`, key, true), nil
 	case False:
-		return fmt.Sprintf(`{"must": {"term": { "%s", %t}}}`, key, false), nil
+		return fmt.Sprintf(`{"must": {"term": { %q: %t}}}`, key, false), nil
 	default:
 		return "", fmt.Errorf("type/golang/bool.go: unsupport operator, %v, %s, %s", key, operator, value)
 	}

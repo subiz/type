@@ -113,28 +113,33 @@ func (t *StringType) Evaluate(obj interface{}, operator string, values string) (
 	}
 }
 
-func (t *StringType) ConvToEls(key, operator, value string) (string, error) {
+func (t *StringType) ConvToEls(key, operator, values string) (string, error) {
+	var value string
+	if err := parseJSON(values, &value); err != nil {
+		log.Fatal(err)
+		return "", err
+	}
 	switch operator {
 	case Eq:
-		return fmt.Sprintf(`{"must": {"term": { "%s", "%s"}}}`, key, value), nil
+		return fmt.Sprintf(`{"must": {"term": { %q: %q}}}`, key, value), nil
 	case Ne:
-		return fmt.Sprintf(`{"must_not": {"term": { "%s", "%s"}}}`, key, value), nil
+		return fmt.Sprintf(`{"must_not": {"term": { %q: %q}}}`, key, value), nil
 		// case In:
 		// 	return fmt.Sprintf(`{"must": {"wildcard": { "%s", "*%s*"}}}`, key, value), nil
 		// case NotIn:
 		// return fmt.Sprintf(`{"must_not": {"wildcard": { "%s", "*%s*"}}}`, key, value), nil
 	case StartsWith:
-		return fmt.Sprintf(`{"must": {"wildcard": { "%s", "%s*"}}}`, key, value), nil
+		return fmt.Sprintf(`{"must": {"wildcard": { %q: %q*}}}`, key, value), nil
 	case NotStartsWith:
-		return fmt.Sprintf(`{"must_not": {"wildcard": { "%s", "%s*"}}}`, key, value), nil
+		return fmt.Sprintf(`{"must_not": {"wildcard": { %q: %q*}}}`, key, value), nil
 	case EndsWith:
-		return fmt.Sprintf(`{"must": {"wildcard": { "%s", "*%s"}}}`, key, value), nil
+		return fmt.Sprintf(`{"must": {"wildcard": { %q: *%q}}}`, key, value), nil
 	case NotEndsWith:
-		return fmt.Sprintf(`{"must_not": {"wildcard": { "%s", "*%s"}}}`, key, value), nil
+		return fmt.Sprintf(`{"must_not": {"wildcard": { %q: *%q}}}`, key, value), nil
 	case Contains:
-		return fmt.Sprintf(`{"must": {"wildcard": { "%s", "*%s*"}}}`, key, value), nil
+		return fmt.Sprintf(`{"must": {"wildcard": { %q: *%q*}}}`, key, value), nil
 	case NotContains:
-		return fmt.Sprintf(`{"must_not": {"wildcard": { "%s", "*%s*"}}}`, key, value), nil
+		return fmt.Sprintf(`{"must_not": {"wildcard": { %q: *%q*}}}`, key, value), nil
 	default:
 		return "", fmt.Errorf("type/golang/string.go: unsupport operator, %v, %s, %s", key, operator, value)
 	}
