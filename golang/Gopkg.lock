@@ -3,17 +3,19 @@
 
 [[projects]]
   branch = "master"
+  digest = "1:63987b971c0f3240a0f1eed70b80b360e6a57d7a8c85ed7daa8bf770319ab308"
   name = "github.com/pquerna/ffjson"
   packages = [
     "ffjson",
     "fflib/v1",
-    "fflib/v1/internal"
+    "fflib/v1/internal",
   ]
-  revision = "d49c2bc1aa135aad0c6f4fc2056623ec78f5d5ac"
+  pruneopts = "UT"
+  revision = "e517b90714f7c0eabe6d2e570a5886ae077d6db6"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "9fee8776e398f654975b8f1aee700662b6cf08f8a2d656f807e98e9f744f4a9a"
+  input-imports = ["github.com/pquerna/ffjson/ffjson"]
   solver-name = "gps-cdcl"
   solver-version = 1

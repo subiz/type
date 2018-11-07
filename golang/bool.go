@@ -14,6 +14,25 @@ func NewBoolType() *BoolType {
 	return &BoolType{}
 }
 
+func (t *BoolType) ConvToEls(key, operator, value string) (string, error) {
+	switch operator {
+	// case Nab:
+	// 	return err != nil, nil
+	// case Ab:
+	// 	return err == nil, nil
+	// case Empty:
+	// 	return obj == nil, nil
+	// case NotEmpty:
+	// 	return obj != nil, nil
+	case True:
+		return fmt.Sprintf(`{"must": {"term": { "%s", %t}}}`, key, true), nil
+	case False:
+		return fmt.Sprintf(`{"must": {"term": { "%s", %t}}}`, key, false), nil
+	default:
+		return "", fmt.Errorf("type/golang/bool.go: unsupport operator, %v, %s, %s", key, operator, value)
+	}
+}
+
 // Evaluate operator(object, values) == true
 func (t *BoolType) Evaluate(obj interface{}, operator string, values string) (bool, error) {
 	var pobj string

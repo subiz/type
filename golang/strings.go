@@ -16,6 +16,10 @@ func NewStringsType() iType {
 	}
 }
 
+func (t *StringsType) ConvToEls(key, operator, value string) (string, error) {
+	return "", nil
+}
+
 func superset(a []string, b []string) bool {
 	for _, i := range b {
 		found := false

@@ -6,6 +6,7 @@ import (
 
 type iType interface {
 	Evaluate(object interface{}, opstring string, value string) (bool, error)
+	ConvToEls(key, operator, value string) (string, error)
 }
 
 // TypeSystem abc

@@ -2,6 +2,7 @@ package typesystem
 
 import (
 	"fmt"
+	"log"
 	"regexp"
 	"strings"
 )
@@ -70,9 +71,12 @@ func (t *StringType) Evaluate(obj interface{}, operator string, values string) (
 		return !contains(value, object), nil
 	case StartsWith:
 		var value string
+		fmt.Println("vao roi")
 		if err := parseJSON(values, &value); err != nil {
+			log.Fatal(err)
 			return false, err
 		}
+		fmt.Println("obj-vl ", object, value)
 		return strings.HasPrefix(object, value), nil
 	case NotStartsWith:
 		var value string
@@ -106,5 +110,32 @@ func (t *StringType) Evaluate(obj interface{}, operator string, values string) (
 		return !strings.Contains(object, value), nil
 	default:
 		return false, fmt.Errorf("type/golang/string.go: unsupport operator, %v, %s, %s", obj, operator, values)
+	}
+}
+
+func (t *StringType) ConvToEls(key, operator, value string) (string, error) {
+	switch operator {
+	case Eq:
+		return fmt.Sprintf(`{"must": {"term": { "%s", "%s"}}}`, key, value), nil
+	case Ne:
+		return fmt.Sprintf(`{"must_not": {"term": { "%s", "%s"}}}`, key, value), nil
+		// case In:
+		// 	return fmt.Sprintf(`{"must": {"wildcard": { "%s", "*%s*"}}}`, key, value), nil
+		// case NotIn:
+		// return fmt.Sprintf(`{"must_not": {"wildcard": { "%s", "*%s*"}}}`, key, value), nil
+	case StartsWith:
+		return fmt.Sprintf(`{"must": {"wildcard": { "%s", "%s*"}}}`, key, value), nil
+	case NotStartsWith:
+		return fmt.Sprintf(`{"must_not": {"wildcard": { "%s", "%s*"}}}`, key, value), nil
+	case EndsWith:
+		return fmt.Sprintf(`{"must": {"wildcard": { "%s", "*%s"}}}`, key, value), nil
+	case NotEndsWith:
+		return fmt.Sprintf(`{"must_not": {"wildcard": { "%s", "*%s"}}}`, key, value), nil
+	case Contains:
+		return fmt.Sprintf(`{"must": {"wildcard": { "%s", "*%s*"}}}`, key, value), nil
+	case NotContains:
+		return fmt.Sprintf(`{"must_not": {"wildcard": { "%s", "*%s*"}}}`, key, value), nil
+	default:
+		return "", fmt.Errorf("type/golang/string.go: unsupport operator, %v, %s, %s", key, operator, value)
 	}
 }

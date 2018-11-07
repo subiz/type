@@ -1,6 +1,7 @@
 package typesystem
 
 import (
+	"errors"
 	"fmt"
 	"math"
 	"strconv"
@@ -146,5 +147,76 @@ func (t *NumberType) Evaluate(obj interface{}, operator string, values string) (
 			math.Abs(object-upper) > Tolerance, nil
 	default:
 		return false, fmt.Errorf("type/golang/number.go: unsupport operator, %v, %s, %s", obj, operator, values)
+	}
+}
+
+func (t *NumberType) ConvToEls(key, operator, values string) (string, error) {
+	switch operator {
+	// case Nan:
+	// 	return err != nil, nil
+	// case An:
+	// 	return err == nil, nil
+	// case Empty:
+	// 	return obj == nil, nil
+	// case NotEmpty:
+	// 	return obj != nil, nil
+	case Eq:
+		value, err := strconv.ParseFloat(values, 64)
+		if err != nil {
+			return "", err
+		}
+		return fmt.Sprintf(`{"must": {"term": { "%s", %f}}}`, key, value), nil
+	case Ne:
+		value, err := strconv.ParseFloat(values, 64)
+		if err != nil {
+			return "", err
+		}
+		return fmt.Sprintf(`{"must_not": {"term": {"%s", %f}}}`, key, value), nil
+	case Gt:
+		value, err := strconv.ParseFloat(values, 64)
+		if err != nil {
+			return "", err
+		}
+		return fmt.Sprintf(`{"must": {"range": {"%s": {"gt": %f}}}}`, key, value), nil
+	case Lt:
+		value, err := strconv.ParseFloat(values, 64)
+		if err != nil {
+			return "", err
+		}
+		return fmt.Sprintf(`{"must": {"range": {"%s": {"lt": %f}}}}`, key, value), nil
+	case Gte:
+		value, err := strconv.ParseFloat(values, 64)
+		if err != nil {
+			return "", err
+		}
+		return fmt.Sprintf(`{"must": {"range": {"%s": {"gte": %f}}}}`, key, value), nil
+	case Lte:
+		value, err := strconv.ParseFloat(values, 64)
+		if err != nil {
+			return "", err
+		}
+		return fmt.Sprintf(`{"must": {"range": {"%s": {"lte": %f}}}}`, key, value), nil
+	case InRange:
+		fs := make([]float64, 0)
+		if err := parseJSON(values, &fs); err != nil {
+			return "", err
+		}
+		if len(fs) < 2 {
+			return "", errors.New("Worng format")
+		}
+		lower, upper := fs[0], fs[1]
+		return fmt.Sprintf(`{"must": {"range": {"%s" {"gte": %f, "lte": %f}}}}`, key, lower, upper), nil
+	case NotInRange:
+		fs := make([]float64, 0)
+		if err := parseJSON(values, &fs); err != nil {
+			return "", err
+		}
+		if len(fs) < 2 {
+			return "", errors.New("Worng format")
+		}
+		lower, upper := fs[0], fs[1]
+		return fmt.Sprintf(`{"must_not": {"range": {"%s" {"gte": %f, "lte": %f}}}}`, key, lower, upper), nil
+	default:
+		return "", fmt.Errorf("type/golang/number.go: unsupport operator, %v, %s, %s", key, operator, values)
 	}
 }
