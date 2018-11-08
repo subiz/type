@@ -14,31 +14,31 @@ func TearUp(t *testing.T) {
 
 func TestDateConvToEls(t *testing.T) {
 	fmt.Println("---- Date ----")
-	query, err := ts.datets.ConvToEls("age", "eq", "10")
+	query, err := ts.ConvToEls(Date, "age", "eq", "10")
 	fmt.Println(query)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	query, err = ts.datets.ConvToEls("age", "ne", "10")
+	query, err = ts.ConvToEls(Date, "age", "ne", "10")
 	fmt.Println(query)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	query, err = ts.datets.ConvToEls("age", "gt", "10")
+	query, err = ts.ConvToEls(Date, "age", "gt", "10")
 	fmt.Println(query)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	query, err = ts.datets.ConvToEls("age", "lt", "10")
+	query, err = ts.ConvToEls(Date, "age", "lt", "10")
 	fmt.Println(query)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	query, err = ts.datets.ConvToEls("age", "gte", "10")
+	query, err = ts.ConvToEls(Date, "age", "gte", "10")
 	fmt.Println(query)
 	if err != nil {
 		t.Fatal(err)
@@ -46,13 +46,13 @@ func TestDateConvToEls(t *testing.T) {
 
 	arrInt := []int{5, 25}
 	arrInts, _ := json.Marshal(arrInt)
-	query, err = ts.datets.ConvToEls("age", "inRange", string(arrInts))
+	query, err = ts.ConvToEls(Date, "age", "inRange", string(arrInts))
 	fmt.Println(query)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	query, err = ts.datets.ConvToEls("age", "notInRange", string(arrInts))
+	query, err = ts.ConvToEls(Date, "age", "notInRange", string(arrInts))
 	fmt.Println(query)
 	if err != nil {
 		t.Fatal(err)
@@ -61,13 +61,13 @@ func TestDateConvToEls(t *testing.T) {
 
 func TestBoolConvToEls(t *testing.T) {
 	fmt.Println("---- Boolean ----")
-	query, err := ts.boolts.ConvToEls("sex", "true", "")
+	query, err := ts.ConvToEls(Boolean, "sex", "true", "")
 	if err != nil {
 		t.Fatal(err)
 	}
 	fmt.Println(query)
 
-	query, err = ts.boolts.ConvToEls("sex", "false", "")
+	query, err = ts.ConvToEls(Boolean, "sex", "false", "")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -77,49 +77,49 @@ func TestBoolConvToEls(t *testing.T) {
 
 func TestStrConvToEls(t *testing.T) {
 	fmt.Println("---- String ----")
-	query, err := ts.stringts.ConvToEls("name", "eq", "\"viet\"")
+	query, err := ts.ConvToEls(String, "name", "eq", "\"viet\"")
 	if err != nil {
 		t.Fatal(err)
 	}
 	fmt.Println(query)
 
-	query, err = ts.stringts.ConvToEls("name", "ne", "\"viet\"")
+	query, err = ts.ConvToEls(String, "name", "ne", "\"viet\"")
 	if err != nil {
 		t.Fatal(err)
 	}
 	fmt.Println(query)
 
-	query, err = ts.stringts.ConvToEls("name", "begin", "\"vi\"")
+	query, err = ts.ConvToEls(String, "name", "begin", "\"vi\"")
 	if err != nil {
 		t.Fatal(err)
 	}
 	fmt.Println(query)
 
-	query, err = ts.stringts.ConvToEls("name", "notBegin", "\"vi\"")
+	query, err = ts.ConvToEls(String, "name", "notBegin", "\"vi\"")
 	if err != nil {
 		t.Fatal(err)
 	}
 	fmt.Println(query)
 
-	query, err = ts.stringts.ConvToEls("name", "end", "\"t\"")
+	query, err = ts.ConvToEls(String, "name", "end", "\"t\"")
 	if err != nil {
 		t.Fatal(err)
 	}
 	fmt.Println(query)
 
-	query, err = ts.stringts.ConvToEls("name", "notEnd", "\"t\"")
+	query, err = ts.ConvToEls(String, "name", "notEnd", "\"t\"")
 	if err != nil {
 		t.Fatal(err)
 	}
 	fmt.Println(query)
 
-	query, err = ts.stringts.ConvToEls("name", "con", "\"ie\"")
+	query, err = ts.ConvToEls(String, "name", "con", "\"ie\"")
 	if err != nil {
 		t.Fatal(err)
 	}
 	fmt.Println(query)
 
-	query, err = ts.stringts.ConvToEls("name", "notCon", "\"viet\"")
+	query, err = ts.ConvToEls(String, "name", "notCon", "\"viet\"")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -129,31 +129,31 @@ func TestStrConvToEls(t *testing.T) {
 
 func TestNumberConvToEls(t *testing.T) {
 	fmt.Println("---- Number ----")
-	query, err := ts.numberts.ConvToEls("ag\"e", "eq", "10")
+	query, err := ts.ConvToEls(Number, "ag\"e", "eq", "10")
 	fmt.Println(query)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	query, err = ts.numberts.ConvToEls("age", "ne", "10")
+	query, err = ts.ConvToEls(Number, "age", "ne", "10")
 	fmt.Println(query)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	query, err = ts.numberts.ConvToEls("age", "gt", "10")
+	query, err = ts.ConvToEls(Number, "age", "gt", "10")
 	fmt.Println(query)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	query, err = ts.numberts.ConvToEls("age", "lt", "10")
+	query, err = ts.ConvToEls(Number, "age", "lt", "10")
 	fmt.Println(query)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	query, err = ts.numberts.ConvToEls("age", "gte", "10")
+	query, err = ts.ConvToEls(Number, "age", "gte", "10")
 	fmt.Println(query)
 	if err != nil {
 		t.Fatal(err)
@@ -161,13 +161,13 @@ func TestNumberConvToEls(t *testing.T) {
 
 	arrInt := []int{5, 25}
 	arrInts, _ := json.Marshal(arrInt)
-	query, err = ts.numberts.ConvToEls("age", "inRange", string(arrInts))
+	query, err = ts.ConvToEls(Number, "age", "inRange", string(arrInts))
 	fmt.Println(query)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	query, err = ts.numberts.ConvToEls("age", "notInRange", string(arrInts))
+	query, err = ts.ConvToEls(Number, "age", "notInRange", string(arrInts))
 	fmt.Println(query)
 	if err != nil {
 		t.Fatal(err)
