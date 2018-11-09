@@ -29,37 +29,37 @@ func (t *DateType) ConvToEls(key, operator, values string) (string, error) {
 		if err != nil {
 			return "", err
 		}
-		return fmt.Sprintf(`{"must": {"term": { %q: %f}}}`, key, value), nil
+		return fmt.Sprintf(`{"bool": {"must": {"term": { %q: %f}}}}`, key, value), nil
 	case Ne:
 		value, err := strconv.ParseFloat(values, 64)
 		if err != nil {
 			return "", err
 		}
-		return fmt.Sprintf(`{"must_not": {"term": {%q: %f}}}`, key, value), nil
+		return fmt.Sprintf(`{"bool": {"must_not": {"term": {%q: %f}}}}`, key, value), nil
 	case Gt:
 		value, err := strconv.ParseFloat(values, 64)
 		if err != nil {
 			return "", err
 		}
-		return fmt.Sprintf(`{"must": {"range": {%q: {"gt": %f}}}}`, key, value), nil
+		return fmt.Sprintf(`{"bool": {"must": {"range": {%q: {"gt": %f}}}}}`, key, value), nil
 	case Lt:
 		value, err := strconv.ParseFloat(values, 64)
 		if err != nil {
 			return "", err
 		}
-		return fmt.Sprintf(`{"must": {"range": {%q: {"lt": %f}}}}`, key, value), nil
+		return fmt.Sprintf(`{"bool": {"must": {"range": {%q: {"lt": %f}}}}}`, key, value), nil
 	case Gte:
 		value, err := strconv.ParseFloat(values, 64)
 		if err != nil {
 			return "", err
 		}
-		return fmt.Sprintf(`{"must": {"range": {%q: {"gte": %f}}}}`, key, value), nil
+		return fmt.Sprintf(`{"bool": {"must": {"range": {%q: {"gte": %f}}}}}`, key, value), nil
 	case Lte:
 		value, err := strconv.ParseFloat(values, 64)
 		if err != nil {
 			return "", err
 		}
-		return fmt.Sprintf(`{"must": {"range": {%q: {"lte": %f}}}}`, key, value), nil
+		return fmt.Sprintf(`{"bool": {"must": {"range": {%q: {"lte": %f}}}}}`, key, value), nil
 	case InRange:
 		fs := make([]float64, 0)
 		if err := parseJSON(values, &fs); err != nil {
@@ -69,7 +69,7 @@ func (t *DateType) ConvToEls(key, operator, values string) (string, error) {
 			return "", errors.New("Worng format")
 		}
 		lower, upper := fs[0], fs[1]
-		return fmt.Sprintf(`{"must": {"range": {%q: {"gte": %f, "lte": %f}}}}`, key, lower, upper), nil
+		return fmt.Sprintf(`{"bool": {"must": {"range": {%q: {"gte": %f, "lte": %f}}}}}`, key, lower, upper), nil
 	case NotInRange:
 		fs := make([]float64, 0)
 		if err := parseJSON(values, &fs); err != nil {
@@ -79,7 +79,7 @@ func (t *DateType) ConvToEls(key, operator, values string) (string, error) {
 			return "", errors.New("Worng format")
 		}
 		lower, upper := fs[0], fs[1]
-		return fmt.Sprintf(`{"must_not": {"range": {%q: {"gte": %f, "lte": %f}}}}`, key, lower, upper), nil
+		return fmt.Sprintf(`{"bool": {"must_not": {"range": {%q: {"gte": %f, "lte": %f}}}}}`, key, lower, upper), nil
 	default:
 		return "", fmt.Errorf("type/golang/number.go: unsupport operator, %v, %s, %s", key, operator, values)
 	}
