@@ -137,7 +137,7 @@ func (t *StringType) ConvToEls(key, operator, values string) (string, error) {
 	case NotEndsWith:
 		return fmt.Sprintf(`{"bool": {"must_not": {"wildcard": { %q: %q}}}}`, key, "*"+value), nil
 	case Contains:
-		return fmt.Sprintf(`{"bool": {"must": {"wildcard": { %q: %q}}}}`, key, "*"+value+"*"), nil
+		return fmt.Sprintf(`{"bool": {"must": {"match": { %q: %q}}}}`, key, "*"+value+"*"), nil
 	case NotContains:
 		return fmt.Sprintf(`{"bool": {"must_not": {"wildcard": { %q: %q}}}}`, key, "*"+value+"*"), nil
 	default:
