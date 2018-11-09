@@ -129,17 +129,17 @@ func (t *StringType) ConvToEls(key, operator, values string) (string, error) {
 		// case NotIn:
 		// return fmt.Sprintf(`{"must_not": {"wildcard": { "%s", "*%s*"}}}`, key, value), nil
 	case StartsWith:
-		return fmt.Sprintf(`{"bool": {"must": {"wildcard": { %q: %q*}}}}`, key, value), nil
+		return fmt.Sprintf(`{"bool": {"must": {"wildcard": { %q: %q}}}}`, key, value+"*"), nil
 	case NotStartsWith:
-		return fmt.Sprintf(`{"bool": {"must_not": {"wildcard": { %q: %q*}}}}`, key, value), nil
+		return fmt.Sprintf(`{"bool": {"must_not": {"wildcard": { %q: %q}}}}`, key, value+"*"), nil
 	case EndsWith:
-		return fmt.Sprintf(`{"bool": {"must": {"wildcard": { %q: *%q}}}}`, key, value), nil
+		return fmt.Sprintf(`{"bool": {"must": {"wildcard": { %q: %q}}}}`, key, "*"+value), nil
 	case NotEndsWith:
-		return fmt.Sprintf(`{"bool": {"must_not": {"wildcard": { %q: *%q}}}}`, key, value), nil
+		return fmt.Sprintf(`{"bool": {"must_not": {"wildcard": { %q: %q}}}}`, key, "*"+value), nil
 	case Contains:
-		return fmt.Sprintf(`{"bool": {"must": {"wildcard": { %q: *%q*}}}}`, key, value), nil
+		return fmt.Sprintf(`{"bool": {"must": {"wildcard": { %q: %q}}}}`, key, "*"+value+"*"), nil
 	case NotContains:
-		return fmt.Sprintf(`{"bool": {"must_not": {"wildcard": { %q: *%q*}}}}`, key, value), nil
+		return fmt.Sprintf(`{"bool": {"must_not": {"wildcard": { %q: %q}}}}`, key, "*"+value+"*"), nil
 	default:
 		return "", fmt.Errorf("type/golang/string.go: unsupport operator, %v, %s, %s", key, operator, value)
 	}
