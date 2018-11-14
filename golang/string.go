@@ -2,7 +2,6 @@ package typesystem
 
 import (
 	"fmt"
-	"log"
 	"regexp"
 	"strings"
 )
@@ -73,7 +72,6 @@ func (t *StringType) Evaluate(obj interface{}, operator string, values string) (
 		var value string
 		fmt.Println("vao roi")
 		if err := parseJSON(values, &value); err != nil {
-			log.Fatal(err)
 			return false, err
 		}
 		fmt.Println("obj-vl ", object, value)
@@ -116,7 +114,6 @@ func (t *StringType) Evaluate(obj interface{}, operator string, values string) (
 func (t *StringType) ConvToEls(key, operator, values string) (string, error) {
 	var value string
 	if err := parseJSON(values, &value); err != nil {
-		log.Fatal(err)
 		return "", err
 	}
 	switch operator {
