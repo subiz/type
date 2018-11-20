@@ -118,9 +118,9 @@ func (t *StringType) ConvToEls(key, operator, values string) (string, error) {
 	}
 	switch operator {
 	case Eq:
-		return fmt.Sprintf(`{"bool": {"must": {"match": { %q: %q}}}}`, key, value), nil
+		return fmt.Sprintf(`{"bool": {"must": {"match_phrase": { %q: %q}}}}`, key, value), nil
 	case Ne:
-		return fmt.Sprintf(`{"bool": {"must_not": {"match": { %q: %q}}}}`, key, value), nil
+		return fmt.Sprintf(`{"bool": {"must_not": {"match_phrase": { %q: %q}}}}`, key, value), nil
 		// case In:
 		// 	return fmt.Sprintf(`{"must": {"wildcard": { "%s", "*%s*"}}}`, key, value), nil
 		// case NotIn:
