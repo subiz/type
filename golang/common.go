@@ -1,8 +1,8 @@
 package typesystem
 
 import (
+	"encoding/json"
 	"fmt"
-	json "github.com/pquerna/ffjson/ffjson"
 	"reflect"
 )
 
