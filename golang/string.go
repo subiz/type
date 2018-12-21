@@ -25,6 +25,9 @@ func contains(s []string, e string) bool {
 }
 
 func (t *StringType) Evaluate(obj interface{}, operator string, values string) (bool, error) {
+	if values == "" {
+		values = `""`
+	}
 	var object string
 	if obj != nil {
 		var ok bool
