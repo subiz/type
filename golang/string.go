@@ -33,7 +33,7 @@ func (t *StringType) Evaluate(obj interface{}, operator string, values string) (
 		var ok bool
 		object, ok = obj.(string)
 		if !ok {
-			return false, fmt.Errorf("type/golang/string.go: obj must be a string, got `%v`\n", obj)
+			return false, fmt.Errorf("type/golang/string.go: obj must be a string, got `%v`", obj)
 		}
 	}
 	switch operator {

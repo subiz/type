@@ -50,12 +50,12 @@ func (t *BoolType) Evaluate(obj interface{}, operator string, values string) (bo
 		var ok bool
 		pobj, ok = obj.(string)
 		if !ok {
-			return false, fmt.Errorf("type/golang/bool.go: obj must be a string or a bool, got `%v`\n", obj)
+			return false, fmt.Errorf("type/golang/bool.go: obj must be a string or a bool, got `%v`", obj)
 		}
 
 		object, err = strconv.ParseBool(pobj)
 		if err != nil {
-			return false, fmt.Errorf("type/golang/bool.go: %v unable to parse value `%s` to bool\n", err, pobj)
+			return false, fmt.Errorf("type/golang/bool.go: %v unable to parse value `%s` to bool", err, pobj)
 		}
 	}
 	switch operator {

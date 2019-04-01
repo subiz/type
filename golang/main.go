@@ -19,28 +19,27 @@ type TypeSystem struct {
 }
 
 const (
-	//Ab abc
-	Ab = "ab"
-	//After abc
+	Ab            = "ab" // a boolean
 	After         = "after"
-	An            = "an"
+	An            = "an" // a number
+	Ad            = "ad" // a date
 	Before        = "before"
 	Contains      = "con"
 	Diff          = "diff"
 	Empty         = "empty"
 	EndsWith      = "end"
-	Eq            = "eq"
+	Eq            = "eq" // equal
 	False         = "false"
-	Gt            = "gt"
-	Gte           = "gte"
+	Gt            = "gt"  // greater than
+	Gte           = "gte" // greater than or equal
 	In            = "in"
 	InRange       = "inRange"
-	Lte           = "lte"
-	Lt            = "lt"
-	Nab           = "nab"
-	Nad           = "nad"
-	Nan           = "nan"
-	Ne            = "ne"
+	Lte           = "lte" // less than or equal
+	Lt            = "lt"  // less than
+	Nab           = "nab" // not a boolean
+	Nad           = "nad" // not a date
+	Nan           = "nan" // not a number
+	Ne            = "ne"  // not equal
 	NotEmpty      = "notEmpty"
 	NotIn         = "notIn"
 	NotStartsWith = "notBegin"
