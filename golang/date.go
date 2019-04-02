@@ -70,13 +70,21 @@ func (t *DateType) Evaluate(obj interface{}, operator string, values string) (bo
 		}
 		return object.Before(from) || object.After(to), nil
 	case Before:
-		v, err := time.Parse(time.RFC3339, values)
+		value := ""
+		if err := parseJSON(values, &value); err != nil {
+			return false, err
+		}
+		v, err := time.Parse(time.RFC3339, value)
 		if err != nil {
 			return false, err
 		}
 		return object.Before(v), nil
 	case After:
-		v, err := time.Parse(time.RFC3339, values)
+		value := ""
+		if err := parseJSON(values, &value); err != nil {
+			return false, err
+		}
+		v, err := time.Parse(time.RFC3339, value)
 		if err != nil {
 			return false, err
 		}
