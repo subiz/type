@@ -18,12 +18,17 @@ func (t *DateType) ConvToEls(key, operator, values string) (string, error) {
 
 // values is in json format
 func (t *DateType) Evaluate(obj interface{}, operator string, values string) (bool, error) {
-	sobj := fmt.Sprintf("%v", obj)
 	var object time.Time
 	var err error
-	if obj != nil {
-		object, err = time.Parse(time.RFC3339, sobj)
+	if t, ok := obj.(time.Time); ok {
+		object = t
+	} else {
+		sobj := fmt.Sprintf("%v", obj)
+		if sobj != "" {
+			object, err = time.Parse(time.RFC3339, sobj)
+		}
 	}
+
 	switch operator {
 	case Nad:
 		return err != nil, nil
