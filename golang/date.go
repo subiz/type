@@ -1,6 +1,7 @@
 package typesystem
 
 import (
+	"errors"
 	"fmt"
 	"time"
 )
@@ -13,7 +14,42 @@ func NewDateType() iType {
 }
 
 func (t *DateType) ConvToEls(key, operator, values string) (string, error) {
-	return "", fmt.Errorf("type/golang/date.go: unsupport operator, %v, %s, %s", key, operator, values)
+	switch operator {
+	case Eq:
+		return fmt.Sprintf(`{"bool": {"must": {"term": { %q: %s}}}}`, key, values), nil
+	case Ne:
+		return fmt.Sprintf(`{"bool": {"must_not": {"term": {%q: %s}}}}`, key, values), nil
+	case Gt:
+		return fmt.Sprintf(`{"bool": {"must": {"range": {%q: {"gt": %s}}}}}`, key, values), nil
+	case Lt:
+		return fmt.Sprintf(`{"bool": {"must": {"range": {%q: {"lt": %s}}}}}`, key, values), nil
+	case Gte:
+		return fmt.Sprintf(`{"bool": {"must": {"range": {%q: {"gte": %s}}}}}`, key, values), nil
+	case Lte:
+		return fmt.Sprintf(`{"bool": {"must": {"range": {%q: {"lte": %s}}}}}`, key, values), nil
+	case InRange:
+		fs := make([]string, 0)
+		if err := parseJSON(values, &fs); err != nil {
+			return "", err
+		}
+		if len(fs) < 2 {
+			return "", errors.New("Worng format")
+		}
+		lower, upper := fs[0], fs[1]
+		return fmt.Sprintf(`{"bool": {"must": {"range": {%q: {"gte": %s, "lte": %s}}}}}`, key, lower, upper), nil
+	case NotInRange:
+		fs := make([]string, 0)
+		if err := parseJSON(values, &fs); err != nil {
+			return "", err
+		}
+		if len(fs) < 2 {
+			return "", errors.New("Worng format")
+		}
+		lower, upper := fs[0], fs[1]
+		return fmt.Sprintf(`{"bool": {"must_not": {"range": {%q: {"gte": %s, "lte": %s}}}}}`, key, lower, upper), nil
+	default:
+		return "", fmt.Errorf("type/golang/datetime.go: unsupport operator, %v, %s, %s", key, operator, values)
+	}
 }
 
 // values is in json format

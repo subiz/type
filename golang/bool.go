@@ -16,14 +16,6 @@ func NewBoolType() *BoolType {
 
 func (t *BoolType) ConvToEls(key, operator, value string) (string, error) {
 	switch operator {
-	// case Nab:
-	// 	return err != nil, nil
-	// case Ab:
-	// 	return err == nil, nil
-	// case Empty:
-	// 	return obj == nil, nil
-	// case NotEmpty:
-	// 	return obj != nil, nil
 	case True:
 		return fmt.Sprintf(`{"bool": {"must": {"term": { %q: %t}}}}`, key, true), nil
 	case False:

@@ -152,14 +152,6 @@ func (t *NumberType) Evaluate(obj interface{}, operator string, values string) (
 
 func (t *NumberType) ConvToEls(key, operator, values string) (string, error) {
 	switch operator {
-	// case Nan:
-	// 	return err != nil, nil
-	// case An:
-	// 	return err == nil, nil
-	// case Empty:
-	// 	return obj == nil, nil
-	// case NotEmpty:
-	// 	return obj != nil, nil
 	case Eq:
 		value, err := strconv.ParseFloat(values, 64)
 		if err != nil {

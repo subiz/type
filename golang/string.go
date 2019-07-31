@@ -121,25 +121,13 @@ func (t *StringType) ConvToEls(key, operator, values string) (string, error) {
 	}
 	switch operator {
 	case Eq:
-		return fmt.Sprintf(`{"bool": {"must": {"match_phrase": { %q: %q}}}}`, key, value), nil
+		return fmt.Sprintf(`{"bool":{"must": {"match_phrase": {%q: %q}}}}`, key, value), nil
 	case Ne:
-		return fmt.Sprintf(`{"bool": {"must_not": {"match_phrase": { %q: %q}}}}`, key, value), nil
-		// case In:
-		// 	return fmt.Sprintf(`{"must": {"wildcard": { "%s", "*%s*"}}}`, key, value), nil
-		// case NotIn:
-		// return fmt.Sprintf(`{"must_not": {"wildcard": { "%s", "*%s*"}}}`, key, value), nil
-	case StartsWith:
-		return fmt.Sprintf(`{"bool": {"must": {"wildcard": { %q: %q}}}}`, key, value+"*"), nil
-	case NotStartsWith:
-		return fmt.Sprintf(`{"bool": {"must_not": {"wildcard": { %q: %q}}}}`, key, value+"*"), nil
-	case EndsWith:
-		return fmt.Sprintf(`{"bool": {"must": {"wildcard": { %q: %q}}}}`, key, "*"+value), nil
-	case NotEndsWith:
-		return fmt.Sprintf(`{"bool": {"must_not": {"wildcard": { %q: %q}}}}`, key, "*"+value), nil
+		return fmt.Sprintf(`{"bool":{"must_not": {"match_phrase": {%q: %q}}}}`, key, value), nil
 	case Contains:
-		return fmt.Sprintf(`{"bool": {"must": {"match": { %q: %q}}}}`, key, "*"+value+"*"), nil
+		return fmt.Sprintf(`{"bool":{"must": {"term": { %q: {"value": %q }}}}}`, key, value), nil
 	case NotContains:
-		return fmt.Sprintf(`{"bool": {"must_not": {"wildcard": { %q: %q}}}}`, key, "*"+value+"*"), nil
+		return fmt.Sprintf(`{"bool":{"must_not": {"term": {%q: {"value": %q }}}}}`, key, value), nil
 	default:
 		return "", fmt.Errorf("type/golang/string.go: unsupport operator, %v, %s, %s", key, operator, value)
 	}

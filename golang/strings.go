@@ -17,7 +17,14 @@ func NewStringsType() iType {
 }
 
 func (t *StringsType) ConvToEls(key, operator, value string) (string, error) {
-	return "", nil
+	switch operator {
+	case Contains:
+		return fmt.Sprintf(`{"bool":{"must": {"term": { %q: {"value": %q }}}}}`, key, value), nil
+	case NotContains:
+		return fmt.Sprintf(`{"bool":{"must_not": {"term": {%q: {"value": %q }}}}}`, key, value), nil
+	default:
+		return "", fmt.Errorf("type/golang/strings.go: unsupport operator, %v, %s, %s", key, operator, value)
+	}
 }
 
 func superset(a []string, b []string) bool {
