@@ -47,6 +47,10 @@ func (t *DateType) ConvToEls(key, operator, values string) (string, error) {
 		}
 		lower, upper := fs[0], fs[1]
 		return fmt.Sprintf(`{"bool": {"must_not": {"range": {%q: {"gte": %q, "lte": %q}}}}}`, key, lower, upper), nil
+	case After:
+		return fmt.Sprintf(`{"bool": {"must": {"range": {%q: {"gt": "%s"}}}}}`, key, values), nil
+	case Before:
+		return fmt.Sprintf(`{"bool": {"must": {"range": {%q: {"lt": "%s"}}}}}`, key, values), nil
 	default:
 		return "", fmt.Errorf("type/golang/datetime.go: unsupport operator, %v, %s, %s", key, operator, values)
 	}
