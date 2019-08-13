@@ -125,9 +125,9 @@ func (t *StringType) ConvToEls(key, operator, values string) (string, error) {
 	case Ne:
 		return fmt.Sprintf(`{"bool":{"must_not": {"match_phrase": {%q: %q}}}}`, key, value), nil
 	case Contains:
-		return fmt.Sprintf(`{"bool":{"must": {"term": { %q: {"value": %q }}}}}`, key, value), nil
+		return fmt.Sprintf(`{"bool":{"must": {"match": { %q: %q }}}}`, key, value), nil
 	case NotContains:
-		return fmt.Sprintf(`{"bool":{"must_not": {"term": {%q: {"value": %q }}}}}`, key, value), nil
+		return fmt.Sprintf(`{"bool":{"must_not": {"match": {%q: %q }}}}`, key, value), nil
 	default:
 		return "", fmt.Errorf("type/golang/string.go: unsupport operator, %v, %s, %s", key, operator, value)
 	}

@@ -19,9 +19,9 @@ func NewStringsType() iType {
 func (t *StringsType) ConvToEls(key, operator, value string) (string, error) {
 	switch operator {
 	case Contains:
-		return fmt.Sprintf(`{"bool":{"must": {"term": { %q: {"value": %q }}}}}`, key, value), nil
+		return fmt.Sprintf(`{"bool":{"must": {"match": { %q: %q }}}}`, key, value), nil
 	case NotContains:
-		return fmt.Sprintf(`{"bool":{"must_not": {"term": {%q: {"value": %q }}}}}`, key, value), nil
+		return fmt.Sprintf(`{"bool":{"must_not": {"match": {%q: %q }}}}`, key, value), nil
 	default:
 		return "", fmt.Errorf("type/golang/strings.go: unsupport operator, %v, %s, %s", key, operator, value)
 	}
