@@ -33,25 +33,25 @@ func (t *DateType) ConvToEls(key, operator, values string) (string, error) {
 		if err := parseJSON(values, &ds); err != nil {
 			return "", err
 		}
-		return fmt.Sprintf(`{"bool": {"must": {"range": {%q: {"gt": %q}}}}}`, key, ds), nil
+		return fmt.Sprintf(`{"bool": {"must": {"range": {%q: {"gt": %q, "format": "date_time||date_time_no_millis"}}}}}`, key, ds), nil
 	case Lt:
 		var ds string
 		if err := parseJSON(values, &ds); err != nil {
 			return "", err
 		}
-		return fmt.Sprintf(`{"bool": {"must": {"range": {%q: {"lt": %q}}}}}`, key, ds), nil
+		return fmt.Sprintf(`{"bool": {"must": {"range": {%q: {"lt": %q, "format": "date_time||date_time_no_millis"}}}}}`, key, ds), nil
 	case Gte:
 		var ds string
 		if err := parseJSON(values, &ds); err != nil {
 			return "", err
 		}
-		return fmt.Sprintf(`{"bool": {"must": {"range": {%q: {"gte": %q}}}}}`, key, ds), nil
+		return fmt.Sprintf(`{"bool": {"must": {"range": {%q: {"gte": %q, "format": "date_time||date_time_no_millis"}}}}}`, key, ds), nil
 	case Lte:
 		var ds string
 		if err := parseJSON(values, &ds); err != nil {
 			return "", err
 		}
-		return fmt.Sprintf(`{"bool": {"must": {"range": {%q: {"lte": %q}}}}}`, key, ds), nil
+		return fmt.Sprintf(`{"bool": {"must": {"range": {%q: {"lte": %q, "format": "date_time||date_time_no_millis"}}}}}`, key, ds), nil
 	case InRange:
 		fs := make([]string, 0)
 		if err := parseJSON(values, &fs); err != nil {
@@ -61,7 +61,7 @@ func (t *DateType) ConvToEls(key, operator, values string) (string, error) {
 			return "", errors.New("Worng format")
 		}
 		lower, upper := fs[0], fs[1]
-		return fmt.Sprintf(`{"bool": {"must": {"range": {%q: {"gte": %q, "lte": %q}}}}}`, key, lower, upper), nil
+		return fmt.Sprintf(`{"bool": {"must": {"range": {%q: {"gte": %q, "lte": %q, "format": "date_time||date_time_no_millis"}}}}}`, key, lower, upper), nil
 	case NotInRange:
 		fs := make([]string, 0)
 		if err := parseJSON(values, &fs); err != nil {
@@ -71,19 +71,19 @@ func (t *DateType) ConvToEls(key, operator, values string) (string, error) {
 			return "", errors.New("Wrong format")
 		}
 		lower, upper := fs[0], fs[1]
-		return fmt.Sprintf(`{"bool": {"must_not": {"range": {%q: {"gte": %q, "lte": %q}}}}}`, key, lower, upper), nil
+		return fmt.Sprintf(`{"bool": {"must_not": {"range": {%q: {"gte": %q, "lte": %q, "format": "date_time||date_time_no_millis"}}}}}`, key, lower, upper), nil
 	case After:
 		var ds string
 		if err := parseJSON(values, &ds); err != nil {
 			return "", err
 		}
-		return fmt.Sprintf(`{"bool": {"must": {"range": {%q: {"gt": %q}}}}}`, key, ds), nil
+		return fmt.Sprintf(`{"bool": {"must": {"range": {%q: {"gt": %q, "format": "date_time||date_time_no_millis"}}}}}`, key, ds), nil
 	case Before:
 		var ds string
 		if err := parseJSON(values, &ds); err != nil {
 			return "", err
 		}
-		return fmt.Sprintf(`{"bool": {"must": {"range": {%q: {"lt": %q}}}}}`, key, ds), nil
+		return fmt.Sprintf(`{"bool": {"must": {"range": {%q: {"lt": %q, "format": "date_time||date_time_no_millis"}}}}}`, key, ds), nil
 	default:
 		return "", fmt.Errorf("type/golang/datetime.go: unsupport operator, %v, %s, %s", key, operator, values)
 	}
