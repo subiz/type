@@ -115,19 +115,28 @@ func (t *StringType) Evaluate(obj interface{}, operator string, values string) (
 }
 
 func (t *StringType) ConvToEls(key, operator, values string) (string, error) {
+	if values == "" {
+		values = `""`
+	}
+
 	var value string
 	if err := parseJSON(values, &value); err != nil {
 		return "", err
 	}
+
 	switch operator {
 	case Eq:
-		return fmt.Sprintf(`{"bool":{"must": {"match_phrase": {%q: %q}}}}`, key, value), nil
+		return fmt.Sprintf(`{"bool": {"must": {"match_phrase": {%q: %q}}}}`, key, value), nil
 	case Ne:
-		return fmt.Sprintf(`{"bool":{"must_not": {"match_phrase": {%q: %q}}}}`, key, value), nil
+		return fmt.Sprintf(`{"bool": {"must_not": {"match_phrase": {%q: %q}}}}`, key, value), nil
 	case Contains:
-		return fmt.Sprintf(`{"bool":{"must": {"match": { %q: %q }}}}`, key, value), nil
+		return fmt.Sprintf(`{"bool": {"must": {"match": { %q: %q }}}}`, key, value), nil
 	case NotContains:
-		return fmt.Sprintf(`{"bool":{"must_not": {"match": {%q: %q }}}}`, key, value), nil
+		return fmt.Sprintf(`{"bool": {"must_not": {"match": {%q: %q }}}}`, key, value), nil
+	case Empty:
+		return fmt.Sprintf(`{"bool": {"must_not": {"exists": {"field": %q}}}}`, key), nil
+	case NotEmpty:
+		return fmt.Sprintf(`{"bool": {"must": {"exists": {"field": %q}}}}`, key, key), nil
 	default:
 		return "", fmt.Errorf("type/golang/string.go: unsupport operator, %v, %s, %s", key, operator, value)
 	}
