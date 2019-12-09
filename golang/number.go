@@ -16,7 +16,7 @@ func NewNumberType() iType {
 	return &NumberType{}
 }
 
-func (t *NumberType) Evaluate(obj interface{}, operator string, values string) (bool, error) {
+func (me *NumberType) Evaluate(obj interface{}, operator string, values string) (bool, error) {
 	sobj := fmt.Sprintf("%v", obj)
 	var object float64
 	var err error
@@ -150,7 +150,7 @@ func (t *NumberType) Evaluate(obj interface{}, operator string, values string) (
 	}
 }
 
-func (t *NumberType) ConvToEls(key, operator, values string) (string, error) {
+func (me *NumberType) ConvToEls(key, operator, values string) (string, error) {
 	switch operator {
 	case Eq:
 		value, err := strconv.ParseFloat(values, 64)
@@ -194,7 +194,7 @@ func (t *NumberType) ConvToEls(key, operator, values string) (string, error) {
 			return "", err
 		}
 		if len(fs) < 2 {
-			return "", errors.New("Worng format")
+			return "", errors.New("Wrong format")
 		}
 		lower, upper := fs[0], fs[1]
 		return fmt.Sprintf(`{"bool": {"must": {"range": {%q: {"gte": %f, "lte": %f}}}}}`, key, lower, upper), nil
@@ -204,10 +204,73 @@ func (t *NumberType) ConvToEls(key, operator, values string) (string, error) {
 			return "", err
 		}
 		if len(fs) < 2 {
-			return "", errors.New("Worng format")
+			return "", errors.New("Wrong format")
 		}
 		lower, upper := fs[0], fs[1]
 		return fmt.Sprintf(`{"bool": {"must_not": {"range": {%q: {"gte": %f, "lte": %f}}}}}`, key, lower, upper), nil
+	default:
+		return "", fmt.Errorf("type/golang/number.go: unsupport operator, %v, %s, %s", key, operator, values)
+	}
+}
+
+func (me *NumberType) ToBigQuery(key, operator, values string) (string, error) {
+	switch operator {
+	case Eq:
+		value, err := strconv.ParseFloat(values, 64)
+		if err != nil {
+			return "", err
+		}
+		return fmt.Sprintf(`(%s = %f)`, key, value), nil
+	case Ne:
+		value, err := strconv.ParseFloat(values, 64)
+		if err != nil {
+			return "", err
+		}
+		return fmt.Sprintf(`(%s != %f)`, key, value), nil
+	case Gt:
+		value, err := strconv.ParseFloat(values, 64)
+		if err != nil {
+			return "", err
+		}
+		return fmt.Sprintf(`(%s > %f)`, key, value), nil
+	case Lt:
+		value, err := strconv.ParseFloat(values, 64)
+		if err != nil {
+			return "", err
+		}
+		return fmt.Sprintf(`(%s < %f)`, key, value), nil
+	case Gte:
+		value, err := strconv.ParseFloat(values, 64)
+		if err != nil {
+			return "", err
+		}
+		return fmt.Sprintf(`(%s >= %f)`, key, value), nil
+	case Lte:
+		value, err := strconv.ParseFloat(values, 64)
+		if err != nil {
+			return "", err
+		}
+		return fmt.Sprintf(`(%s <= %f)`, key, value), nil
+	case InRange:
+		fs := make([]float64, 0)
+		if err := parseJSON(values, &fs); err != nil {
+			return "", err
+		}
+		if len(fs) < 2 {
+			return "", errors.New("Wrong format")
+		}
+		lower, upper := fs[0], fs[1]
+		return fmt.Sprintf(`(%s > %f AND %s < %f)`, key, lower, key, upper), nil
+	case NotInRange:
+		fs := make([]float64, 0)
+		if err := parseJSON(values, &fs); err != nil {
+			return "", err
+		}
+		if len(fs) < 2 {
+			return "", errors.New("Wrong format")
+		}
+		lower, upper := fs[0], fs[1]
+		return fmt.Sprintf(`(%s < %f OR %s > %f)`, key, lower, key, upper), nil
 	default:
 		return "", fmt.Errorf("type/golang/number.go: unsupport operator, %v, %s, %s", key, operator, values)
 	}

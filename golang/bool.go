@@ -14,7 +14,7 @@ func NewBoolType() *BoolType {
 	return &BoolType{}
 }
 
-func (t *BoolType) ConvToEls(key, operator, value string) (string, error) {
+func (me *BoolType) ConvToEls(key, operator, value string) (string, error) {
 	switch operator {
 	case True:
 		return fmt.Sprintf(`{"bool": {"must": {"term": { %q: %t}}}}`, key, true), nil
@@ -25,8 +25,19 @@ func (t *BoolType) ConvToEls(key, operator, value string) (string, error) {
 	}
 }
 
+func (me *BoolType) ToBigQuery(key, operator, value string) (string, error) {
+	switch operator {
+	case True:
+		return fmt.Sprintf(`(%s = %t)`, key, true), nil
+	case False:
+		return fmt.Sprintf(`(%s = %t)`, key, false), nil
+	default:
+		return "", fmt.Errorf(`type/golang/bool.go: unsupport operator, %q, %q, %q`, key, operator, value)
+	}
+}
+
 // Evaluate operator(object, values) == true
-func (t *BoolType) Evaluate(obj interface{}, operator string, values string) (bool, error) {
+func (me *BoolType) Evaluate(obj interface{}, operator string, values string) (bool, error) {
 	var pobj string
 	var err error
 	var object bool

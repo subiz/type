@@ -16,12 +16,23 @@ func NewStringsType() iType {
 	}
 }
 
-func (t *StringsType) ConvToEls(key, operator, value string) (string, error) {
+func (me *StringsType) ConvToEls(key, operator, value string) (string, error) {
 	switch operator {
 	case Contains:
 		return fmt.Sprintf(`{"bool":{"must": {"match": { %q: %q }}}}`, key, value), nil
 	case NotContains:
 		return fmt.Sprintf(`{"bool":{"must_not": {"match": {%q: %q }}}}`, key, value), nil
+	default:
+		return "", fmt.Errorf("type/golang/strings.go: unsupport operator, %v, %s, %s", key, operator, value)
+	}
+}
+
+func (me *StringsType) ToBigQuery(key, operator, value string) (string, error) {
+	switch operator {
+	case Contains:
+		return fmt.Sprintf(`(%q IN UNNEST(%s))`, value, key), nil
+	case NotContains:
+		return fmt.Sprintf(`(%q NOT IN UNNEST(%s))`, value, key), nil
 	default:
 		return "", fmt.Errorf("type/golang/strings.go: unsupport operator, %v, %s, %s", key, operator, value)
 	}
@@ -47,7 +58,7 @@ func equals(a []string, b []string) bool {
 	return superset(a, b) && superset(b, a)
 }
 
-func (t *StringsType) Evaluate(obj interface{} /*slice*/, operator string, values string) (bool, error) {
+func (me *StringsType) Evaluate(obj interface{} /*slice*/, operator string, values string) (bool, error) {
 	var object []string
 	if obj != nil {
 		var ok bool
@@ -99,63 +110,63 @@ func (t *StringsType) Evaluate(obj interface{} /*slice*/, operator string, value
 		return !superset(object, value), nil
 	case Regex:
 		for _, s := range object {
-			if o, _ := t.stringtype.Evaluate(s, Regex, values); o {
+			if o, _ := me.stringtype.Evaluate(s, Regex, values); o {
 				return true, nil
 			}
 		}
 		return false, nil
 	case In:
 		for _, s := range object {
-			if o, _ := t.stringtype.Evaluate(s, In, values); o {
+			if o, _ := me.stringtype.Evaluate(s, In, values); o {
 				return true, nil
 			}
 		}
 		return false, nil
 	case NotIn:
 		for _, s := range object {
-			if o, _ := t.stringtype.Evaluate(s, In, values); o {
+			if o, _ := me.stringtype.Evaluate(s, In, values); o {
 				return false, nil
 			}
 		}
 		return true, nil
 	case StartsWith:
 		for _, s := range object {
-			if o, _ := t.stringtype.Evaluate(s, StartsWith, values); o {
+			if o, _ := me.stringtype.Evaluate(s, StartsWith, values); o {
 				return true, nil
 			}
 		}
 		return false, nil
 	case EndsWith:
 		for _, s := range object {
-			if o, _ := t.stringtype.Evaluate(s, EndsWith, values); o {
+			if o, _ := me.stringtype.Evaluate(s, EndsWith, values); o {
 				return true, nil
 			}
 		}
 		return false, nil
 	case NotStartsWith:
 		for _, s := range object {
-			if o, _ := t.stringtype.Evaluate(s, StartsWith, values); o {
+			if o, _ := me.stringtype.Evaluate(s, StartsWith, values); o {
 				return false, nil
 			}
 		}
 		return true, nil
 	case NotEndsWith:
 		for _, s := range object {
-			if o, _ := t.stringtype.Evaluate(s, EndsWith, values); o {
+			if o, _ := me.stringtype.Evaluate(s, EndsWith, values); o {
 				return false, nil
 			}
 		}
 		return true, nil
 	case Contains:
 		for _, s := range object {
-			if o, _ := t.stringtype.Evaluate(s, Contains, values); o {
+			if o, _ := me.stringtype.Evaluate(s, Contains, values); o {
 				return true, nil
 			}
 		}
 		return false, nil
 	case NotContains:
 		for _, s := range object {
-			if o, _ := t.stringtype.Evaluate(s, Contains, values); o {
+			if o, _ := me.stringtype.Evaluate(s, Contains, values); o {
 				return false, nil
 			}
 		}

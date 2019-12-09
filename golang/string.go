@@ -1,6 +1,7 @@
 package typesystem
 
 import (
+	"encoding/json"
 	"fmt"
 	"regexp"
 	"strings"
@@ -24,7 +25,7 @@ func contains(s []string, e string) bool {
 	return false
 }
 
-func (t *StringType) Evaluate(obj interface{}, operator string, values string) (bool, error) {
+func (me *StringType) Evaluate(obj interface{}, operator string, values string) (bool, error) {
 	if values == "" {
 		values = `""`
 	}
@@ -114,7 +115,7 @@ func (t *StringType) Evaluate(obj interface{}, operator string, values string) (
 	}
 }
 
-func (t *StringType) ConvToEls(key, operator, values string) (string, error) {
+func (me *StringType) ConvToEls(key, operator, values string) (string, error) {
 	if values == "" {
 		values = `""`
 	}
@@ -136,7 +137,35 @@ func (t *StringType) ConvToEls(key, operator, values string) (string, error) {
 	case Empty:
 		return fmt.Sprintf(`{"bool": {"must_not": {"exists": {"field": %q}}}}`, key), nil
 	case NotEmpty:
-		return fmt.Sprintf(`{"bool": {"must": {"exists": {"field": %q}}}}`, key, key), nil
+		return fmt.Sprintf(`{"bool": {"must": {"exists": {"field": %q}}}}`, key), nil
+	default:
+		return "", fmt.Errorf("type/golang/string.go: unsupport operator, %v, %s, %s", key, operator, value)
+	}
+}
+
+func (me *StringType) ToBigQuery(key, operator, values string) (string, error) {
+	if values == "" {
+		values = `""`
+	}
+
+	var value string
+	if err := json.Unmarshal([]byte(values), &value); err != nil {
+		return "", err
+	}
+
+	switch operator {
+	case Eq:
+		return fmt.Sprintf(`(%s = %q)`, key, value), nil
+	case Ne:
+		return fmt.Sprintf(`(%s != %q)`, key, value), nil
+	case Contains:
+		return fmt.Sprintf(`(%s LIKE "%s")`, key, value), nil
+	case NotContains:
+		return fmt.Sprintf(`(%s NOT LIKE "%s")`, key, value), nil
+	case Empty:
+		return fmt.Sprintf(`(%s IS NULL OR %s = "")`, key, key), nil
+	case NotEmpty:
+		return fmt.Sprintf(`(%s IS NOT NULL AND %s != "")`, key, key), nil
 	default:
 		return "", fmt.Errorf("type/golang/string.go: unsupport operator, %v, %s, %s", key, operator, value)
 	}

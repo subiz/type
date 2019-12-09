@@ -1,6 +1,7 @@
 package typesystem
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"time"
@@ -13,7 +14,7 @@ func NewDateType() iType {
 	return &DateType{}
 }
 
-func (t *DateType) ConvToEls(key, operator, values string) (string, error) {
+func (me *DateType) ConvToEls(key, operator, values string) (string, error) {
 	switch operator {
 	case Eq:
 		var ds string
@@ -89,8 +90,100 @@ func (t *DateType) ConvToEls(key, operator, values string) (string, error) {
 	}
 }
 
+func parseTime(jsonEncoded string) (time.Time, error) {
+	var t time.Time
+	var s string
+	err := json.Unmarshal([]byte(jsonEncoded), &s)
+	if err != nil {
+		return t, err
+	}
+	t, err = time.Parse(time.RFC3339Nano, s)
+	if err != nil {
+		return t, err
+	}
+	return t, nil
+}
+
+func parseTimeRange(jsonEncoded string) ([2]time.Time, error) {
+	rang := [2]time.Time{}
+	ss := make([]string, 0)
+	err := json.Unmarshal([]byte(jsonEncoded), &ss)
+	if err != nil {
+		return rang, err
+	}
+	if len(ss) < 2 {
+		return rang, errors.New("Wrong format")
+	}
+	rang[0], err = time.Parse(time.RFC3339Nano, ss[0])
+	if err != nil {
+		return rang, err
+	}
+	rang[1], err = time.Parse(time.RFC3339Nano, ss[1])
+	if err != nil {
+		return rang, err
+	}
+	return rang, nil
+}
+
+func (me *DateType) ToBigQuery(key, operator, values string) (string, error) {
+	switch operator {
+	case Eq:
+		t, err := parseTime(values)
+		if err != nil {
+			return "", err
+		}
+		return fmt.Sprintf(`(%s = %d)`, key, t.UnixNano()/1e6), nil
+	case Ne:
+		t, err := parseTime(values)
+		if err != nil {
+			return "", err
+		}
+		return fmt.Sprintf(`(%s != %d)`, key, t.UnixNano()/1e6), nil
+	case Gt, After:
+		t, err := parseTime(values)
+		if err != nil {
+			return "", err
+		}
+		return fmt.Sprintf(`(%s > %d)`, key, t.UnixNano()/1e6), nil
+	case Lt, Before:
+		t, err := parseTime(values)
+		if err != nil {
+			return "", err
+		}
+		return fmt.Sprintf(`(%s < %d)`, key, t.UnixNano()/1e6), nil
+	case Gte:
+		t, err := parseTime(values)
+		if err != nil {
+			return "", err
+		}
+		return fmt.Sprintf(`(%s >= %d)`, key, t.UnixNano()/1e6), nil
+	case Lte:
+		t, err := parseTime(values)
+		if err != nil {
+			return "", err
+		}
+		return fmt.Sprintf(`(%s <= %d)`, key, t.UnixNano()/1e6), nil
+	case InRange:
+		rang, err := parseTimeRange(values)
+		if err != nil {
+			return "", err
+		}
+		from, to := rang[0].UnixNano()/1e6, rang[1].UnixNano()/1e6
+		return fmt.Sprintf(`(%s > %d AND %s < %d)`, key, from, key, to), nil
+	case NotInRange:
+		rang, err := parseTimeRange(values)
+		if err != nil {
+			return "", err
+		}
+		from, to := rang[0].UnixNano()/1e6, rang[1].UnixNano()/1e6
+		return fmt.Sprintf(`(%s < %d OR %s > %d)`, key, from, key, to), nil
+	default:
+		return "", fmt.Errorf("type/golang/datetime.go: unsupport operator, %v, %s, %s", key, operator, values)
+	}
+}
+
 // values is in json format
-func (t *DateType) Evaluate(obj interface{}, operator string, values string) (bool, error) {
+func (me *DateType) Evaluate(obj interface{}, operator string, values string) (bool, error) {
 	var object time.Time
 	var err error
 	if t, ok := obj.(time.Time); ok {
@@ -112,61 +205,29 @@ func (t *DateType) Evaluate(obj interface{}, operator string, values string) (bo
 	case NotEmpty:
 		return obj != nil, nil
 	case InRange:
-		ranges := []string{}
-		err := parseJSON(values, &ranges)
+		rang, err := parseTimeRange(values)
 		if err != nil {
 			return false, err
 		}
-		if len(ranges) != 2 {
-			return false, fmt.Errorf("type/golang/date.go: values is invalid, %s", values)
-		}
-		from, err := time.Parse(time.RFC3339, ranges[0])
-		if err != nil {
-			return false, err
-		}
-		to, err := time.Parse(time.RFC3339, ranges[1])
-		if err != nil {
-			return false, err
-		}
-		return object.After(from) && object.Before(to), nil
+		return object.After(rang[0]) && object.Before(rang[1]), nil
 	case NotInRange:
-		ranges := []string{}
-		err := parseJSON(values, &ranges)
+		rang, err := parseTimeRange(values)
 		if err != nil {
 			return false, err
 		}
-		if len(ranges) != 2 {
-			return false, fmt.Errorf("type/golang/date.go: values is invalid, %s", values)
-		}
-		from, err := time.Parse(time.RFC3339, ranges[0])
+		return object.Before(rang[0]) || object.After(rang[1]), nil
+	case Lt, Before:
+		t, err := parseTime(values)
 		if err != nil {
 			return false, err
 		}
-		to, err := time.Parse(time.RFC3339, ranges[1])
+		return object.Before(t), nil
+	case Gt, After:
+		t, err := parseTime(values)
 		if err != nil {
 			return false, err
 		}
-		return object.Before(from) || object.After(to), nil
-	case Before:
-		value := ""
-		if err := parseJSON(values, &value); err != nil {
-			return false, err
-		}
-		v, err := time.Parse(time.RFC3339, value)
-		if err != nil {
-			return false, err
-		}
-		return object.Before(v), nil
-	case After:
-		value := ""
-		if err := parseJSON(values, &value); err != nil {
-			return false, err
-		}
-		v, err := time.Parse(time.RFC3339, value)
-		if err != nil {
-			return false, err
-		}
-		return object.After(v), nil
+		return object.After(t), nil
 	}
 
 	return false, fmt.Errorf("type/golang/date.go: unsupport operator, %v, %s, %s", obj, operator, values)
