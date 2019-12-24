@@ -2,7 +2,6 @@ package typesystem
 
 import (
 	"encoding/json"
-	"fmt"
 	"testing"
 )
 
@@ -12,167 +11,10 @@ func TearUp(t *testing.T) {
 
 }
 
-func TestDateConvToEls(t *testing.T) {
-	fmt.Println("---- Date ----")
-	query, err := ts.ConvToEls(Date, "age", "eq", "10")
-	fmt.Println(query)
-	if err != nil {
-		t.Fatal(err)
-	}
 
-	query, err = ts.ConvToEls(Date, "age", "ne", "10")
-	fmt.Println(query)
-	if err != nil {
-		t.Fatal(err)
-	}
 
-	query, err = ts.ConvToEls(Date, "age", "gt", "10")
-	fmt.Println(query)
-	if err != nil {
-		t.Fatal(err)
-	}
 
-	query, err = ts.ConvToEls(Date, "age", "lt", "10")
-	fmt.Println(query)
-	if err != nil {
-		t.Fatal(err)
-	}
 
-	query, err = ts.ConvToEls(Date, "age", "gte", "10")
-	fmt.Println(query)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	arrInt := []int{5, 25}
-	arrInts, _ := json.Marshal(arrInt)
-	query, err = ts.ConvToEls(Date, "age", "inRange", string(arrInts))
-	fmt.Println(query)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	query, err = ts.ConvToEls(Date, "age", "notInRange", string(arrInts))
-	fmt.Println(query)
-	if err != nil {
-		t.Fatal(err)
-	}
-}
-
-func TestBoolConvToEls(t *testing.T) {
-	fmt.Println("---- Boolean ----")
-	query, err := ts.ConvToEls(Boolean, "sex", "true", "")
-	if err != nil {
-		t.Fatal(err)
-	}
-	fmt.Println(query)
-
-	query, err = ts.ConvToEls(Boolean, "sex", "false", "")
-	if err != nil {
-		t.Fatal(err)
-	}
-	fmt.Println(query)
-
-}
-
-func TestStrConvToEls(t *testing.T) {
-	fmt.Println("---- String ----")
-	query, err := ts.ConvToEls(String, "name", "eq", "\"viet\"")
-	if err != nil {
-		t.Fatal(err)
-	}
-	fmt.Println(query)
-
-	query, err = ts.ConvToEls(String, "name", "ne", "\"viet\"")
-	if err != nil {
-		t.Fatal(err)
-	}
-	fmt.Println(query)
-
-	query, err = ts.ConvToEls(String, "name", "begin", "\"vi\"")
-	if err != nil {
-		t.Fatal(err)
-	}
-	fmt.Println(query)
-
-	query, err = ts.ConvToEls(String, "name", "notBegin", "\"vi\"")
-	if err != nil {
-		t.Fatal(err)
-	}
-	fmt.Println(query)
-
-	query, err = ts.ConvToEls(String, "name", "end", "\"t\"")
-	if err != nil {
-		t.Fatal(err)
-	}
-	fmt.Println(query)
-
-	query, err = ts.ConvToEls(String, "name", "notEnd", "\"t\"")
-	if err != nil {
-		t.Fatal(err)
-	}
-	fmt.Println(query)
-
-	query, err = ts.ConvToEls(String, "name", "con", "\"ie\"")
-	if err != nil {
-		t.Fatal(err)
-	}
-	fmt.Println(query)
-
-	query, err = ts.ConvToEls(String, "name", "notCon", "\"viet\"")
-	if err != nil {
-		t.Fatal(err)
-	}
-	fmt.Println(query)
-
-}
-
-func TestNumberConvToEls(t *testing.T) {
-	fmt.Println("---- Number ----")
-	query, err := ts.ConvToEls(Number, "ag\"e", "eq", "10")
-	fmt.Println(query)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	query, err = ts.ConvToEls(Number, "age", "ne", "10")
-	fmt.Println(query)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	query, err = ts.ConvToEls(Number, "age", "gt", "10")
-	fmt.Println(query)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	query, err = ts.ConvToEls(Number, "age", "lt", "10")
-	fmt.Println(query)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	query, err = ts.ConvToEls(Number, "age", "gte", "10")
-	fmt.Println(query)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	arrInt := []int{5, 25}
-	arrInts, _ := json.Marshal(arrInt)
-	query, err = ts.ConvToEls(Number, "age", "inRange", string(arrInts))
-	fmt.Println(query)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	query, err = ts.ConvToEls(Number, "age", "notInRange", string(arrInts))
-	fmt.Println(query)
-	if err != nil {
-		t.Fatal(err)
-	}
-}
 
 // func TestEmpty(t *testing.T) {
 // 	TearUp(t)
@@ -404,8 +246,21 @@ func TestNumber(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	// ret, err = ts.Evaluate(Number, obj, NotInRange, str)
+	//if ret {
+	//t.Fatal("must be false")
+	//}
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+
+	obj = "114"
+	strb, _ = json.Marshal([]int{1, 20})
+	str = string(strb)
 	ret, err = ts.Evaluate(Number, obj, NotInRange, str)
-	if ret {
+	if !ret {
 		t.Fatal("must be true")
 	}
 

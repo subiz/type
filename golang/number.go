@@ -133,14 +133,16 @@ func (me *NumberType) Evaluate(obj interface{}, operator string, values string) 
 		if obj == nil {
 			return false, nil
 		}
+
 		fs := make([]float64, 0)
 		if err := parseJSON(values, &fs); err != nil {
 			return false, err
 		}
-		vs := convertToInterfaceSlice(values)
-		if len(vs) < 2 {
+
+		if len(fs) < 2 {
 			return false, nil
 		}
+
 		lower, upper := fs[0], fs[1]
 		return object < lower || upper < object &&
 			math.Abs(object-lower) > Tolerance &&
